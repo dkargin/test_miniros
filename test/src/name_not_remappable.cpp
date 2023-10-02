@@ -27,19 +27,19 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <ros/ros.h>
+#include <miniros/ros.h>
 #include <gtest/gtest.h>
 
 TEST(RemappingTest, remapping_test)
 {
-  ros::NodeHandle nh;
+  miniros::NodeHandle nh;
 
-  ASSERT_EQ(ros::this_node::getName(), "/NAME");
+  ASSERT_EQ(miniros::this_node::getName(), "/NAME");
 }
 
 int main(int argc, char** argv)
 {
   testing::InitGoogleTest(&argc, argv);
-  ros::init(argc, argv, "remapping_tester");
+  miniros::init(argc, argv, "remapping_tester");
   return RUN_ALL_TESTS();
 }

@@ -43,12 +43,12 @@
 #include <time.h>
 #include <stdlib.h>
 
-#include "ros/ros.h"
+#include <miniros/ros.h>
 #include "test_roscpp/TestEmpty.h"
 
 TEST(masterInfo, getPublishedTopics)
 {
-  ros::NodeHandle nh;
+  miniros::NodeHandle nh;
 
   typedef std::set<std::string> S_string;
   S_string advertised_topics;
@@ -61,7 +61,7 @@ TEST(masterInfo, getPublishedTopics)
   advertised_topics.insert( "/test_topic_7" );
   advertised_topics.insert( "/test_topic_8" );
 
-  std::vector<ros::Publisher> pubs;
+  std::vector<miniros::Publisher> pubs;
 
   S_string::iterator adv_it = advertised_topics.begin();
   S_string::iterator adv_end = advertised_topics.end();
@@ -71,8 +71,8 @@ TEST(masterInfo, getPublishedTopics)
     pubs.push_back(nh.advertise<test_roscpp::TestEmpty>( topic, 0 ));
   }
 
-  ros::master::V_TopicInfo master_topics;
-  ros::master::getTopics(master_topics);
+  miniros::master::V_TopicInfo master_topics;
+  miniros::master::getTopics(master_topics);
 
   adv_it = advertised_topics.begin();
   adv_end = advertised_topics.end();
@@ -81,11 +81,11 @@ TEST(masterInfo, getPublishedTopics)
     const std::string& topic = *adv_it;
     bool found = false;
 
-    ros::master::V_TopicInfo::iterator master_it = master_topics.begin();
-    ros::master::V_TopicInfo::iterator master_end = master_topics.end();
+    miniros::master::V_TopicInfo::iterator master_it = master_topics.begin();
+    miniros::master::V_TopicInfo::iterator master_end = master_topics.end();
     for ( ; master_it != master_end; ++master_it )
     {
-      const ros::master::TopicInfo& info = *master_it;
+      const miniros::master::TopicInfo& info = *master_it;
       if ( topic == info.name )
       {
         found = true;
@@ -102,8 +102,8 @@ int
 main(int argc, char** argv)
 {
   testing::InitGoogleTest(&argc, argv);
-  ros::init( argc, argv, "get_master_information" );
-  ros::NodeHandle nh;
+  miniros::init( argc, argv, "get_master_information" );
+  miniros::NodeHandle nh;
 
   return RUN_ALL_TESTS();
 }

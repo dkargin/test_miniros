@@ -38,10 +38,10 @@
 #include <time.h>
 #include <stdlib.h>
 
-#include "ros/ros.h"
+#include <miniros/ros.h>
 #include <test_roscpp/TestWithHeader.h>
 
-using namespace ros;
+using namespace miniros;
 using namespace test_roscpp;
 
 uint32_t g_recv_count = 0;
@@ -55,19 +55,19 @@ void callback(const TestWithHeaderConstPtr& msg)
 
 TEST(IncrementingSequence, incrementing)
 {
-  ros::NodeHandle nh;
-  ros::Publisher pub = nh.advertise<TestWithHeader>("test_with_header", 0);
-  ros::Subscriber sub = nh.subscribe("test_with_header", 0, callback);
+  miniros::NodeHandle nh;
+  miniros::Publisher pub = nh.advertise<TestWithHeader>("test_with_header", 0);
+  miniros::Subscriber sub = nh.subscribe("test_with_header", 0, callback);
 
   while (g_recv_count < 50)
   {
     TestWithHeader msg;
     msg.header.frame_id = "blah";
-    msg.header.stamp = ros::Time::now();
+    msg.header.stamp = miniros::Time::now();
     pub.publish(msg);
 
-    ros::spinOnce();
-    ros::WallDuration(0.01).sleep();
+    miniros::spinOnce();
+    miniros::WallDuration(0.01).sleep();
   }
 
   ASSERT_GT(g_sequence, 0UL);
@@ -76,9 +76,9 @@ TEST(IncrementingSequence, incrementing)
 int main(int argc, char** argv)
 {
   testing::InitGoogleTest(&argc, argv);
-  ros::init(argc, argv, "incrementing_sequence");
+  miniros::init(argc, argv, "incrementing_sequence");
 
-  ros::NodeHandle nh;
+  miniros::NodeHandle nh;
 
   return RUN_ALL_TESTS();
 }

@@ -42,40 +42,40 @@
 #include <time.h>
 #include <stdlib.h>
 
-#include "ros/ros.h"
+#include <miniros/ros.h>
 #include <ros/param.h>
 #include <ros/names.h>
 
 TEST(roscpp, parameterRemapping)
 {
   std::string param;
-  ASSERT_STREQ(ros::names::resolve("test_full").c_str(), "/b/test_full");
-  ASSERT_TRUE(ros::param::get("test_full", param));
-  ASSERT_STREQ(ros::names::resolve("/a/test_full").c_str(), "/b/test_full");
-  ASSERT_TRUE(ros::param::get("/a/test_full", param));
+  ASSERT_STREQ(miniros::names::resolve("test_full").c_str(), "/b/test_full");
+  ASSERT_TRUE(miniros::param::get("test_full", param));
+  ASSERT_STREQ(miniros::names::resolve("/a/test_full").c_str(), "/b/test_full");
+  ASSERT_TRUE(miniros::param::get("/a/test_full", param));
 
-  ASSERT_STREQ(ros::names::resolve("test_local").c_str(), "/a/test_local2");
-  ASSERT_TRUE(ros::param::get("test_local", param));
-  ASSERT_STREQ(ros::names::resolve("/a/test_local").c_str(), "/a/test_local2");
-  ASSERT_TRUE(ros::param::get("/a/test_local", param));
+  ASSERT_STREQ(miniros::names::resolve("test_local").c_str(), "/a/test_local2");
+  ASSERT_TRUE(miniros::param::get("test_local", param));
+  ASSERT_STREQ(miniros::names::resolve("/a/test_local").c_str(), "/a/test_local2");
+  ASSERT_TRUE(miniros::param::get("/a/test_local", param));
 
-  ASSERT_STREQ(ros::names::resolve("test_relative").c_str(), "/b/test_relative");
-  ASSERT_TRUE(ros::param::get("test_relative", param));
-  ASSERT_STREQ(ros::names::resolve("/a/test_relative").c_str(), "/b/test_relative");
-  ASSERT_TRUE(ros::param::get("/a/test_relative", param));
+  ASSERT_STREQ(miniros::names::resolve("test_relative").c_str(), "/b/test_relative");
+  ASSERT_TRUE(miniros::param::get("test_relative", param));
+  ASSERT_STREQ(miniros::names::resolve("/a/test_relative").c_str(), "/b/test_relative");
+  ASSERT_TRUE(miniros::param::get("/a/test_relative", param));
 }
 
 TEST(roscpp, nodeNameRemapping)
 {
-  std::string node_name = ros::this_node::getName();
+  std::string node_name = miniros::this_node::getName();
   ASSERT_STREQ(node_name.c_str(), "/a/name_remapped_with_ns");
 }
 int
 main(int argc, char** argv)
 {
   testing::InitGoogleTest(&argc, argv);
-  ros::init( argc, argv, "name_remapping_with_ns" );
-  ros::NodeHandle nh;
+  miniros::init( argc, argv, "name_remapping_with_ns" );
+  miniros::NodeHandle nh;
 
   return RUN_ALL_TESTS();
 }

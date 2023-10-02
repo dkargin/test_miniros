@@ -44,7 +44,7 @@
 #include <boost/bind.hpp>
 #include <boost/thread.hpp>
 
-using namespace ros;
+using namespace miniros;
 
 class FakeMessage
 {
@@ -206,7 +206,7 @@ TEST(SubscriptionQueue, clearInCallback)
 void clearWhileThreadIsBlockingCallback(bool* done, boost::barrier* barrier)
 {
   barrier->wait();
-  ros::WallDuration(.1).sleep();
+  miniros::WallDuration(.1).sleep();
   *done = true;
 }
 
@@ -259,7 +259,7 @@ TEST(SubscriptionQueue, concurrentCallbacks)
 
 void waitForASecond()
 {
-  ros::WallDuration(1.0).sleep();
+  miniros::WallDuration(1.0).sleep();
 }
 
 TEST(SubscriptionQueue, nonConcurrentOrdering)
@@ -284,7 +284,7 @@ TEST(SubscriptionQueue, nonConcurrentOrdering)
 int main(int argc, char** argv)
 {
   testing::InitGoogleTest(&argc, argv);
-  ros::init(argc, argv, "blah");
+  miniros::init(argc, argv, "blah");
   return RUN_ALL_TESTS();
 }
 

@@ -42,14 +42,14 @@
 #include <time.h>
 #include <stdlib.h>
 
-#include "ros/ros.h"
+#include <miniros/ros.h>
 #include "ros/callback_queue.h"
 #include <test_roscpp/TestArray.h>
 #include <test_roscpp/TestStringString.h>
 
 #include <boost/scoped_ptr.hpp>
 
-using namespace ros;
+using namespace miniros;
 using namespace test_roscpp;
 
 std::string g_node_name = "test_timer_callbacks";
@@ -137,7 +137,7 @@ class SteadyTimerHelper
 
     void pretendWork(const float t)
     {
-      ros::Rate r(1. / t);
+      miniros::Rate r(1. / t);
       r.sleep();
     }
 
@@ -316,7 +316,7 @@ TEST(RoscppTimerCallbacks, stopSteadyTimer)
 }
 
 int32_t g_steady_count = 0;
-void steadyTimerCallback(const ros::SteadyTimerEvent&)
+void steadyTimerCallback(const miniros::SteadyTimerEvent&)
 {
   ++g_steady_count;
 }
@@ -325,7 +325,7 @@ TEST(RoscppTimerCallbacks, steadyStopThenSpin)
 {
   g_steady_count = 0;
   NodeHandle n;
-  ros::SteadyTimer timer = n.createSteadyTimer(ros::WallDuration(0.001), steadyTimerCallback);
+  miniros::SteadyTimer timer = n.createSteadyTimer(miniros::WallDuration(0.001), steadyTimerCallback);
 
   WallDuration(0.1).sleep();
   timer.stop();
@@ -431,7 +431,7 @@ public:
 
   void pretendWork(const float t)
   {
-    ros::Rate r(1. / t);
+    miniros::Rate r(1. / t);
     r.sleep();
   }
 
@@ -614,7 +614,7 @@ TEST(RoscppTimerCallbacks, stopWallTimer)
 }
 
 int32_t g_count = 0;
-void timerCallback(const ros::WallTimerEvent&)
+void timerCallback(const miniros::WallTimerEvent&)
 {
   ++g_count;
 }
@@ -623,7 +623,7 @@ TEST(RoscppTimerCallbacks, stopThenSpin)
 {
   g_count = 0;
   NodeHandle n;
-  ros::WallTimer timer = n.createWallTimer(ros::WallDuration(0.001), timerCallback);
+  miniros::WallTimer timer = n.createWallTimer(miniros::WallDuration(0.001), timerCallback);
 
   WallDuration(0.1).sleep();
   timer.stop();
@@ -951,7 +951,7 @@ TEST(RoscppTimerCallbacks, stopROSTimer)
 int main(int argc, char** argv)
 {
   testing::InitGoogleTest(&argc, argv);
-  ros::init(argc, argv, g_node_name);
+  miniros::init(argc, argv, g_node_name);
 
   return RUN_ALL_TESTS();
 }

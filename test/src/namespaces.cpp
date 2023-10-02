@@ -42,13 +42,13 @@
 #include <time.h>
 #include <stdlib.h>
 
-#include <ros/ros.h>
+#include <miniros/ros.h>
 #include <ros/param.h>
 
 TEST(namespaces, param)
 {
   std::string param;
-  ASSERT_TRUE( ros::param::get( "parent", param ) );
+  ASSERT_TRUE( miniros::param::get( "parent", param ) );
   ROS_INFO("parent=%s", param.c_str());
   ASSERT_EQ(param, ":ROS_NAMESPACE:parent");
 }
@@ -56,11 +56,11 @@ TEST(namespaces, param)
 TEST(namespaces, localParam)
 {
   std::string param;
-  ASSERT_TRUE( ros::param::get( "~/local", param ) );
+  ASSERT_TRUE( miniros::param::get( "~/local", param ) );
   ROS_INFO("~/local=%s", param.c_str());
   ASSERT_EQ(param, ":ROS_NAMESPACE:NODE_NAME:local");
 
-  ros::NodeHandle n("~");
+  miniros::NodeHandle n("~");
   std::string param2;
   n.param<std::string>("local", param2, param);
   ASSERT_STREQ(param2.c_str(), param.c_str());
@@ -70,22 +70,22 @@ TEST(namespaces, localParam)
 TEST(namespaces, globalParam)
 {
   std::string param;
-  ASSERT_TRUE( ros::param::get( "/global", param ) );
+  ASSERT_TRUE( miniros::param::get( "/global", param ) );
   ASSERT_EQ(param, ":global");
 }
 
 TEST(namespaces, otherNamespaceParam)
 {
   std::string param;
-  ASSERT_TRUE( ros::param::get( "/other_namespace/param", param ) );
+  ASSERT_TRUE( miniros::param::get( "/other_namespace/param", param ) );
   ASSERT_EQ(param, ":other_namespace:param");
 }
 
 TEST(namespaces, name)
 {
-  std::string name = ros::this_node::getName();
+  std::string name = miniros::this_node::getName();
   ASSERT_EQ(name, "/ROS_NAMESPACE/NODE_NAME");
-  std::string nspace = ros::this_node::getNamespace();
+  std::string nspace = miniros::this_node::getNamespace();
   ASSERT_EQ(nspace, "/ROS_NAMESPACE");
 }
 
@@ -93,7 +93,7 @@ int
 main(int argc, char** argv)
 {
   testing::InitGoogleTest(&argc, argv);
-  ros::init( argc, argv, "namespaces" );
+  miniros::init( argc, argv, "namespaces" );
 
   return RUN_ALL_TESTS();
 }

@@ -37,7 +37,7 @@
 
 #include <gtest/gtest.h>
 
-#include <ros/ros.h>
+#include <miniros/ros.h>
 #include <ros/names.h>
 #include <test_roscpp/TestArray.h>
 #include <test_roscpp/TestStringInt.h>
@@ -50,23 +50,23 @@ char* g_argv[8];
 
 TEST(Inspection, getAdvertisedTopics)
 {
-  ros::NodeHandle nh;
+  miniros::NodeHandle nh;
 
   std::vector<std::string> topics;
 
-  ros::this_node::getAdvertisedTopics(topics);
+  miniros::this_node::getAdvertisedTopics(topics);
   // Note that it's 1, not 0, because the rosout appender has already snuck
   // in and advertised.
   ASSERT_EQ((int)topics.size(),1);
   ASSERT_EQ(topics[0], "/rosout");
 
   {
-    ros::Publisher pub1 = nh.advertise<test_roscpp::TestArray>("topic",1);
-    ros::Publisher pub2 = nh.advertise<test_roscpp::TestArray>("ns/topic",1);
-    ros::Publisher pub3 = nh.advertise<test_roscpp::TestArray>("/global/topic",1);
+    miniros::Publisher pub1 = nh.advertise<test_roscpp::TestArray>("topic",1);
+    miniros::Publisher pub2 = nh.advertise<test_roscpp::TestArray>("ns/topic",1);
+    miniros::Publisher pub3 = nh.advertise<test_roscpp::TestArray>("/global/topic",1);
 
     topics.clear();
-    ros::this_node::getAdvertisedTopics(topics);
+    miniros::this_node::getAdvertisedTopics(topics);
     // Note that it's 4, not 3, because the rosout appender has already snuck
     // in and advertised.
     ASSERT_EQ((int)topics.size(),4);
@@ -80,7 +80,7 @@ TEST(Inspection, getAdvertisedTopics)
   }
 
   topics.clear();
-  ros::this_node::getAdvertisedTopics(topics);
+  miniros::this_node::getAdvertisedTopics(topics);
   // Note that it's 1, not 0, because the rosout appender has already snuck
   // in and advertised.
   ASSERT_EQ((int)topics.size(),1);
@@ -90,7 +90,7 @@ TEST(Inspection, getAdvertisedTopics)
 TEST(Inspection, commandLineParsing)
 {
   ASSERT_EQ(g_argc, 5);
-  ros::M_string remappings = ros::names::getRemappings();
+  miniros::M_string remappings = miniros::names::getRemappings();
 
   ASSERT_STREQ(remappings["/foo"].c_str(), "/bar");
   ASSERT_STREQ(remappings["/baz"].c_str(), "/bang");
@@ -113,8 +113,8 @@ main(int argc, char** argv)
   g_argv[6] = strdup("bomb:=barn");
   g_argv[7] = strdup("--bangbang");
 
-  ros::init( g_argc, g_argv, "inspection" );
-  ros::NodeHandle nh;
+  miniros::init( g_argc, g_argv, "inspection" );
+  miniros::NodeHandle nh;
 
   return RUN_ALL_TESTS();
 }

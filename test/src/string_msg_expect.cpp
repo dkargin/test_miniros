@@ -38,7 +38,7 @@
 #include <time.h>
 #include <stdlib.h>
 
-#include "ros/ros.h"
+#include <miniros/ros.h>
 #include "std_msgs/String.h"
 
 std::string expect_what, on_topic;
@@ -52,15 +52,15 @@ void callback(const std_msgs::String::ConstPtr& msg)
 
 TEST(Expecter, impl)
 {
-  ros::NodeHandle nh;
+  miniros::NodeHandle nh;
 
-  ros::Subscriber sub = nh.subscribe(on_topic, 0, callback);
+  miniros::Subscriber sub = nh.subscribe(on_topic, 0, callback);
 
-  ros::Rate loop_rate(10);
+  miniros::Rate loop_rate(10);
 
-  while(ros::ok() && nseen == 0)
+  while(miniros::ok() && nseen == 0)
     {
-      ros::spinOnce();
+      miniros::spinOnce();
       loop_rate.sleep();
     }
 
@@ -76,8 +76,8 @@ main(int argc, char** argv)
   std::cout << "Will look for string \"" << expect_what << "\" on topic " << on_topic << "\n";
 
   testing::InitGoogleTest(&argc, argv);
-  ros::init( argc, argv, "params" );
-//  ros::NodeHandle nh;
+  miniros::init( argc, argv, "params" );
+//  miniros::NodeHandle nh;
 
   return RUN_ALL_TESTS();
 }

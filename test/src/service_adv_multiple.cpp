@@ -37,7 +37,7 @@
 
 #include <gtest/gtest.h>
 
-#include "ros/ros.h"
+#include <miniros/ros.h>
 #include "ros/service.h"
 #include <test_roscpp/TestStringString.h>
 
@@ -49,18 +49,18 @@ bool srvCallback(test_roscpp::TestStringString::Request &,
 
 TEST(SrvCall, advertiseMultiple)
 {
-  ros::NodeHandle nh;
-  ros::ServiceServer srv = nh.advertiseService("service_adv", srvCallback);
+  miniros::NodeHandle nh;
+  miniros::ServiceServer srv = nh.advertiseService("service_adv", srvCallback);
   ASSERT_TRUE(srv);
-  ros::ServiceServer srv2 = nh.advertiseService("service_adv", srvCallback);
+  miniros::ServiceServer srv2 = nh.advertiseService("service_adv", srvCallback);
   ASSERT_FALSE(srv2);
 }
 
 int main(int argc, char** argv)
 {
   testing::InitGoogleTest(&argc, argv);
-  ros::init(argc, argv, "service_adv_multiple");
-  ros::NodeHandle nh;
+  miniros::init(argc, argv, "service_adv_multiple");
+  miniros::NodeHandle nh;
 
   return RUN_ALL_TESTS();
 }

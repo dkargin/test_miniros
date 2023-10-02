@@ -27,7 +27,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <ros/ros.h>
+#include <miniros/ros.h>
 #include <gtest/gtest.h>
 
 static int argc_;
@@ -37,16 +37,16 @@ static char** argv_;
 
 TEST(NamespaceRemappingTest, unqualified_remaps)
 {
-  ros::M_string local_remappings;
+  miniros::M_string local_remappings;
   local_remappings.insert(std::make_pair("a", "Ra"));
   local_remappings.insert(std::make_pair("b", "Rb"));
   local_remappings.insert(std::make_pair("c", "Rc"));
 
-  PRINT(ros::NodeHandle base("a", local_remappings));
-  PRINT(ros::NodeHandle a1(base, "a"));
-  PRINT(ros::NodeHandle a2(base, "a", ros::M_string()));
-  PRINT(ros::NodeHandle  b(base, "b"));
-  PRINT(ros::NodeHandle  c(base, "c", ros::M_string()));  // Same as b, but different constructor
+  PRINT(miniros::NodeHandle base("a", local_remappings));
+  PRINT(miniros::NodeHandle a1(base, "a"));
+  PRINT(miniros::NodeHandle a2(base, "a", miniros::M_string()));
+  PRINT(miniros::NodeHandle  b(base, "b"));
+  PRINT(miniros::NodeHandle  c(base, "c", miniros::M_string()));  // Same as b, but different constructor
 
   EXPECT_STREQ(base.getNamespace().c_str(), "/a");
   EXPECT_STREQ(a1.getNamespace().c_str(), "/a/Ra");
@@ -57,11 +57,11 @@ TEST(NamespaceRemappingTest, unqualified_remaps)
 
 TEST(NamespaceRemappingTest, qualified_remaps)
 {
-  ros::M_string local_remappings;
+  miniros::M_string local_remappings;
   local_remappings.insert(std::make_pair("/a", "/Ra"));
 
-  PRINT(ros::NodeHandle a("a", local_remappings));  // local_remappings don't apply to this nodehandle's name
-  PRINT(ros::NodeHandle sub_a(a, "a"));             // remapping were fully qualified, so don't apply to /a/a
+  PRINT(miniros::NodeHandle a("a", local_remappings));  // local_remappings don't apply to this nodehandle's name
+  PRINT(miniros::NodeHandle sub_a(a, "a"));             // remapping were fully qualified, so don't apply to /a/a
 
   EXPECT_STREQ(    a.getNamespace().c_str(), "/a");
   EXPECT_STREQ(sub_a.getNamespace().c_str(), "/a/a");
@@ -69,13 +69,13 @@ TEST(NamespaceRemappingTest, qualified_remaps)
 
 TEST(NamespaceRemappingTest, unqualified_root_remaps)
 {
-  ros::M_string local_remappings;
+  miniros::M_string local_remappings;
   local_remappings.insert(std::make_pair("a", "Ra"));
   local_remappings.insert(std::make_pair("b", "Rb"));
 
-  ros::NodeHandle base("", local_remappings);
-  ros::NodeHandle a(base, "a");
-  ros::NodeHandle b(base, "b", ros::M_string());
+  miniros::NodeHandle base("", local_remappings);
+  miniros::NodeHandle a(base, "a");
+  miniros::NodeHandle b(base, "b", miniros::M_string());
 
   EXPECT_STREQ(a.getNamespace().c_str(), "/Ra");
   EXPECT_STREQ(b.getNamespace().c_str(), "/Rb");
@@ -83,23 +83,23 @@ TEST(NamespaceRemappingTest, unqualified_root_remaps)
 
 TEST(NamespaceRemappingTest, tilde_namespaces)
 {
-  ros::M_string local_remappings;
+  miniros::M_string local_remappings;
   local_remappings.insert(std::make_pair("a", "Ra"));
   local_remappings.insert(std::make_pair("b", "Rb"));
 
-  ros::NodeHandle base("~", local_remappings);
-  ros::NodeHandle a(base, "a");
-  ros::NodeHandle b(base, "b", ros::M_string());
+  miniros::NodeHandle base("~", local_remappings);
+  miniros::NodeHandle a(base, "a");
+  miniros::NodeHandle b(base, "b", miniros::M_string());
 
-  EXPECT_STREQ(base.getNamespace().c_str(), ros::this_node::getName().c_str());
-  EXPECT_STREQ(a.getNamespace().c_str(), (ros::this_node::getName() + "/Ra").c_str());
-  EXPECT_STREQ(b.getNamespace().c_str(), (ros::this_node::getName() + "/Rb").c_str());
+  EXPECT_STREQ(base.getNamespace().c_str(), miniros::this_node::getName().c_str());
+  EXPECT_STREQ(a.getNamespace().c_str(), (miniros::this_node::getName() + "/Ra").c_str());
+  EXPECT_STREQ(b.getNamespace().c_str(), (miniros::this_node::getName() + "/Rb").c_str());
 }
 
 int main(int argc, char** argv)
 {
   testing::InitGoogleTest(&argc, argv);
-  ros::init(argc, argv, "remapping_tester");
+  miniros::init(argc, argv, "remapping_tester");
   argc_ = argc;
   argv_ = argv;
   return RUN_ALL_TESTS();

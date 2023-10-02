@@ -35,7 +35,7 @@
  */
 
 #include <gtest/gtest.h>
-#include "ros/ros.h"
+#include <miniros/ros.h>
 #include "std_msgs/String.h"
 
 #include <vector>
@@ -59,7 +59,7 @@ void chatterCallback3(std_msgs::String::ConstPtr msg)
   ROS_INFO("I heard(3): [%s]", msg->data.c_str());
 }
 
-void chatterCallback4(const ros::MessageEvent<std_msgs::String const>& event)
+void chatterCallback4(const miniros::MessageEvent<std_msgs::String const>& event)
 {
   ROS_INFO("I heard(4): [%s, %s]", event.getMessage()->data.c_str(), event.getConnectionHeader()["callerid"].c_str());
 }
@@ -79,7 +79,7 @@ void chatterCallback7(std_msgs::String::Ptr msg)
   ROS_INFO("I heard(7): [%s]", msg->data.c_str());
 }
 
-void chatterCallback8(const ros::MessageEvent<std_msgs::String>& event)
+void chatterCallback8(const miniros::MessageEvent<std_msgs::String>& event)
 {
   ROS_INFO("I heard(8): [%s, %s]", event.getMessage()->data.c_str(), event.getConnectionHeader()["callerid"].c_str());
 }
@@ -101,7 +101,7 @@ struct A
     ROS_INFO("A I heard(3): [%s]", msg->data.c_str());
   }
 
-  void chatterCallback4(const ros::MessageEvent<std_msgs::String const>& event)
+  void chatterCallback4(const miniros::MessageEvent<std_msgs::String const>& event)
   {
     ROS_INFO("A I heard(4): [%s]", event.getMessage()->data.c_str());
   }
@@ -131,7 +131,7 @@ struct A
     ROS_INFO("A I heard(7): [%s]", msg->data.c_str());
   }
 
-  void chatterCallback10(const ros::MessageEvent<std_msgs::String>& event)
+  void chatterCallback10(const miniros::MessageEvent<std_msgs::String>& event)
   {
     ROS_INFO("A I heard(8): [%s, %s]", event.getMessage()->data.c_str(), event.getConnectionHeader()["callerid"].c_str());
   }
@@ -145,9 +145,9 @@ struct A
 
 TEST(SubscriptionCallbackTypes, compile)
 {
-  ros::NodeHandle n;
+  miniros::NodeHandle n;
 
-  std::vector<ros::Subscriber> subs;
+  std::vector<miniros::Subscriber> subs;
   subs.push_back(n.subscribe("chatter", 1000, chatterCallback));
   subs.push_back(n.subscribe<std_msgs::String>("chatter", 1000, chatterCallback));
   subs.push_back(n.subscribe("chatter", 1000, chatterCallback2));
@@ -182,8 +182,8 @@ int main(int argc, char **argv)
 {
   testing::InitGoogleTest(&argc, argv);
 
-  ros::init( argc, argv, "subscription_callback_types" );
-  ros::NodeHandle nh;
+  miniros::init( argc, argv, "subscription_callback_types" );
+  miniros::NodeHandle nh;
 
   return RUN_ALL_TESTS();
 }

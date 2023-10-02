@@ -9,8 +9,8 @@
 
 int main(int argc, char** argv)
 {
-  ros::init(argc, argv, "publisher");
-  ros::NodeHandle n;
+  miniros::init(argc, argv, "publisher");
+  miniros::NodeHandle n;
 
   const size_t NUM_BYTES = 8;
   std_msgs::Int8MultiArray data;
@@ -19,11 +19,11 @@ int main(int argc, char** argv)
   assert(argc > 1);
   float frequency = atof(argv[1]);
 
-  ros::Publisher pub = n.advertise<std_msgs::Int8MultiArray>("data", 1);
-  ros::Rate rate(frequency);
+  miniros::Publisher pub = n.advertise<std_msgs::Int8MultiArray>("data", 1);
+  miniros::Rate rate(frequency);
 
   size_t start = 0;
-  while(ros::ok())
+  while(miniros::ok())
   {
     data.data.clear();
     for(size_t i = 0; i < NUM_BYTES; ++i)

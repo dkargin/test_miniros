@@ -39,7 +39,7 @@
 static char g_header_data1[] = "A=B";
 static char g_header_data2[] = "AAAAAAAAAAAAA=BBBBBBB\nBBBBBBB";
 
-using namespace ros;
+using namespace miniros;
 
 TEST(Header, parse)
 {

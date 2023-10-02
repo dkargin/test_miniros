@@ -42,49 +42,49 @@
 #include <time.h>
 #include <stdlib.h>
 
-#include "ros/ros.h"
+#include <miniros/ros.h>
 #include <ros/param.h>
 #include <ros/names.h>
 
 TEST(roscpp, parameterRemapping)
 {
   std::string param;
-  ASSERT_TRUE(ros::param::get("mapfrom", param));
-  ASSERT_STREQ(ros::names::resolve("mapfrom").c_str(), "/mapto");
+  ASSERT_TRUE(miniros::param::get("mapfrom", param));
+  ASSERT_STREQ(miniros::names::resolve("mapfrom").c_str(), "/mapto");
 
-  ASSERT_TRUE(ros::param::get("/mapto", param));
-  ASSERT_STREQ(ros::names::resolve("/mapfrom").c_str(), "/mapto");
+  ASSERT_TRUE(miniros::param::get("/mapto", param));
+  ASSERT_STREQ(miniros::names::resolve("/mapfrom").c_str(), "/mapto");
 }
 
 TEST(roscpp, nodeNameRemapping)
 {
-  std::string node_name = ros::this_node::getName();
+  std::string node_name = miniros::this_node::getName();
   ASSERT_STREQ(node_name.c_str(), "/name_remapped");
 }
 
 TEST(roscpp, cleanName)
 {
-  ASSERT_STREQ(ros::names::clean("////asdf///").c_str(), "/asdf");
-  ASSERT_STREQ(ros::names::clean("////asdf///jioweioj").c_str(), "/asdf/jioweioj");
-  ASSERT_STREQ(ros::names::clean("////asdf///jioweioj/").c_str(), "/asdf/jioweioj");
+  ASSERT_STREQ(miniros::names::clean("////asdf///").c_str(), "/asdf");
+  ASSERT_STREQ(miniros::names::clean("////asdf///jioweioj").c_str(), "/asdf/jioweioj");
+  ASSERT_STREQ(miniros::names::clean("////asdf///jioweioj/").c_str(), "/asdf/jioweioj");
 }
 
 TEST(RoscppHandles, nodeHandleNameRemapping)
 {
-  ros::M_string remap;
+  miniros::M_string remap;
   remap["a"] = "b";
   remap["/a/a"] = "/a/b";
   remap["c"] = "/a/c";
   remap["d/d"] = "/c/e";
   remap["d/e"] = "c/f";
-  ros::NodeHandle n("", remap);
+  miniros::NodeHandle n("", remap);
 
   EXPECT_STREQ(n.resolveName("a").c_str(), "/b");
   EXPECT_STREQ(n.resolveName("/a/a").c_str(), "/a/b");
   EXPECT_STREQ(n.resolveName("c").c_str(), "/a/c");
   EXPECT_STREQ(n.resolveName("d/d").c_str(), "/c/e");
 
-  ros::NodeHandle n2("z", remap);
+  miniros::NodeHandle n2("z", remap);
   EXPECT_STREQ(n2.resolveName("a").c_str(), "/z/b");
   EXPECT_STREQ(n2.resolveName("/a/a").c_str(), "/a/b");
   EXPECT_STREQ(n2.resolveName("c").c_str(), "/a/c");
@@ -96,8 +96,8 @@ int
 main(int argc, char** argv)
 {
   testing::InitGoogleTest(&argc, argv);
-  ros::init( argc, argv, "name_remapping" );
-  ros::NodeHandle nh;
+  miniros::init( argc, argv, "name_remapping" );
+  miniros::NodeHandle nh;
 
   return RUN_ALL_TESTS();
 }

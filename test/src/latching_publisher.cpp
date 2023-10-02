@@ -38,10 +38,10 @@
 #include <time.h>
 #include <stdlib.h>
 
-#include "ros/ros.h"
+#include <miniros/ros.h>
 #include <test_roscpp/TestArray.h>
 
-using namespace ros;
+using namespace miniros;
 using namespace test_roscpp;
 
 std::string g_node_name = "test_latching_publisher";
@@ -53,42 +53,42 @@ public:
   : count_(0)
   {}
 
-  void cb(const ros::MessageEvent<TestArray>& msg_event)
+  void cb(const miniros::MessageEvent<TestArray>& msg_event)
   {
     ++count_;
     last_msg_event_ = msg_event;
   }
 
   int32_t count_;
-  ros::MessageEvent<TestArray> last_msg_event_;
+  miniros::MessageEvent<TestArray> last_msg_event_;
 };
 
 TEST(RoscppLatchingPublisher, nonLatching)
 {
-  ros::NodeHandle n;
-  ros::Publisher pub = n.advertise<TestArray>("test", 1, false);
+  miniros::NodeHandle n;
+  miniros::Publisher pub = n.advertise<TestArray>("test", 1, false);
   TestArray arr;
   pub.publish(arr);
 
   Helper h;
-  ros::Subscriber sub = n.subscribe("test", 1, &Helper::cb, &h);
-  ros::Duration(0.1).sleep();
-  ros::spinOnce();
+  miniros::Subscriber sub = n.subscribe("test", 1, &Helper::cb, &h);
+  miniros::Duration(0.1).sleep();
+  miniros::spinOnce();
 
   ASSERT_EQ(h.count_, 0);
 }
 
 TEST(RoscppLatchingPublisher, latching)
 {
-  ros::NodeHandle n;
-  ros::Publisher pub = n.advertise<TestArray>("test", 1, true);
+  miniros::NodeHandle n;
+  miniros::Publisher pub = n.advertise<TestArray>("test", 1, true);
   TestArray arr;
   pub.publish(arr);
 
   Helper h;
-  ros::Subscriber sub = n.subscribe("test", 1, &Helper::cb, &h);
-  ros::Duration(0.1).sleep();
-  ros::spinOnce();
+  miniros::Subscriber sub = n.subscribe("test", 1, &Helper::cb, &h);
+  miniros::Duration(0.1).sleep();
+  miniros::spinOnce();
 
   ASSERT_EQ(h.count_, 1);
 
@@ -97,21 +97,21 @@ TEST(RoscppLatchingPublisher, latching)
 
 TEST(RoscppLatchingPublisher, latchingMultipleSubscriptions)
 {
-  ros::NodeHandle n;
-  ros::Publisher pub = n.advertise<TestArray>("test", 1, true);
+  miniros::NodeHandle n;
+  miniros::Publisher pub = n.advertise<TestArray>("test", 1, true);
   TestArray arr;
   pub.publish(arr);
 
   Helper h1, h2;
-  ros::Subscriber sub1 = n.subscribe("test", 1, &Helper::cb, &h1);
-  ros::Duration(0.1).sleep();
-  ros::spinOnce();
+  miniros::Subscriber sub1 = n.subscribe("test", 1, &Helper::cb, &h1);
+  miniros::Duration(0.1).sleep();
+  miniros::spinOnce();
 
   ASSERT_EQ(h1.count_, 1);
   ASSERT_EQ(h2.count_, 0);
 
-  ros::Subscriber sub2 = n.subscribe("test", 1, &Helper::cb, &h2);
-  ros::spinOnce();
+  miniros::Subscriber sub2 = n.subscribe("test", 1, &Helper::cb, &h2);
+  miniros::spinOnce();
 
   ASSERT_EQ(h1.count_, 1);
   ASSERT_EQ(h2.count_, 1);
@@ -120,9 +120,9 @@ TEST(RoscppLatchingPublisher, latchingMultipleSubscriptions)
 int main(int argc, char** argv)
 {
   testing::InitGoogleTest(&argc, argv);
-  ros::init(argc, argv, g_node_name);
+  miniros::init(argc, argv, g_node_name);
 
-  ros::NodeHandle nh;
+  miniros::NodeHandle nh;
 
   return RUN_ALL_TESTS();
 }

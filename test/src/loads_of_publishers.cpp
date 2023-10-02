@@ -30,7 +30,7 @@
 /* Author: Josh Faust */
 
 #include <gtest/gtest.h>
-#include <ros/ros.h>
+#include <miniros/ros.h>
 #include <ros/callback_queue.h>
 
 #include "test_roscpp/TestArray.h"
@@ -43,22 +43,22 @@ void callback(const test_roscpp::TestArrayConstPtr&)
 
 TEST(LoadsOfPublishers, waitForAll)
 {
-  ros::NodeHandle nh;
-  ros::Subscriber sub = nh.subscribe("roscpp/pubsub_test", 1000, callback);
+  miniros::NodeHandle nh;
+  miniros::Subscriber sub = nh.subscribe("roscpp/pubsub_test", 1000, callback);
 
   while (sub.getNumPublishers() < g_pub_count)
   {
-    ros::getGlobalCallbackQueue()->callAvailable(ros::WallDuration(0.1));
+    miniros::getGlobalCallbackQueue()->callAvailable(miniros::WallDuration(0.1));
   }
 
-  ros::WallDuration(10).sleep();
-  ros::spinOnce();
+  miniros::WallDuration(10).sleep();
+  miniros::spinOnce();
   ASSERT_EQ(sub.getNumPublishers(), g_pub_count);
 }
 
 struct Helper
 {
-  void callback(const ros::MessageEvent<test_roscpp::TestArray>& msg_event)
+  void callback(const miniros::MessageEvent<test_roscpp::TestArray>& msg_event)
   {
     alive[msg_event.getPublisherName()] = true;
   }
@@ -68,20 +68,20 @@ struct Helper
 
 TEST(LoadsOfPublishers, receiveFromAll)
 {
-  ros::NodeHandle nh;
+  miniros::NodeHandle nh;
   Helper helper;
-  ros::Subscriber sub = nh.subscribe("roscpp/pubsub_test", 1000, &Helper::callback, &helper);
+  miniros::Subscriber sub = nh.subscribe("roscpp/pubsub_test", 1000, &Helper::callback, &helper);
 
   while (helper.alive.size() < g_pub_count)
   {
-    ros::getGlobalCallbackQueue()->callAvailable(ros::WallDuration(0.1));
+    miniros::getGlobalCallbackQueue()->callAvailable(miniros::WallDuration(0.1));
   }
 }
 
 int main(int argc, char** argv)
 {
   testing::InitGoogleTest(&argc, argv);
-  ros::init(argc, argv, "loads_of_publishers");
+  miniros::init(argc, argv, "loads_of_publishers");
 
   if (argc < 2)
   {
@@ -91,7 +91,7 @@ int main(int argc, char** argv)
 
   g_pub_count = atoi(argv[1]);
 
-  ros::NodeHandle nh;
+  miniros::NodeHandle nh;
 
   return RUN_ALL_TESTS();
 }

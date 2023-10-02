@@ -33,7 +33,7 @@
 
 #include <gtest/gtest.h>
 
-#include <ros/ros.h>
+#include <miniros/ros.h>
 #include <ros/connection_manager.h>
 
 #include "test_roscpp/TestArray.h"
@@ -48,30 +48,30 @@ void callback(const test_roscpp::TestArrayConstPtr&)
 TEST(SubscribeRetryTCP, localDisconnect)
 {
   g_count = 0;
-  ros::NodeHandle nh;
-  ros::Subscriber sub = nh.subscribe("roscpp/pubsub_test", 0, callback);
+  miniros::NodeHandle nh;
+  miniros::Subscriber sub = nh.subscribe("roscpp/pubsub_test", 0, callback);
   // wait for initial messages to arrive
-  ros::WallTime start = ros::WallTime::now();
-  while (g_count == 0 && ros::WallTime::now() - start < ros::WallDuration(5.0))
+  miniros::WallTime start = miniros::WallTime::now();
+  while (g_count == 0 && miniros::WallTime::now() - start < miniros::WallDuration(5.0))
   {
-    ros::WallDuration(0.01).sleep();
-    ros::spinOnce();
+    miniros::WallDuration(0.01).sleep();
+    miniros::spinOnce();
   }
 
   ASSERT_GT(g_count, 0);
 
-  ros::ConnectionManager::instance()->clear(ros::Connection::TransportDisconnect);
+  miniros::ConnectionManager::instance()->clear(miniros::Connection::TransportDisconnect);
 
   // spin to make sure all previous messages have arrived
-  ros::spinOnce();
+  miniros::spinOnce();
 
   g_count = 0;
   // wait for reconnect/new messages to arrive
-  start = ros::WallTime::now();
-  while (g_count == 0 && ros::WallTime::now() - start < ros::WallDuration(5.0))
+  start = miniros::WallTime::now();
+  while (g_count == 0 && miniros::WallTime::now() - start < miniros::WallDuration(5.0))
   {
-    ros::WallDuration(0.01).sleep();
-    ros::spinOnce();
+    miniros::WallDuration(0.01).sleep();
+    miniros::spinOnce();
   }
 
   ASSERT_GT(g_count, 0);
@@ -80,35 +80,35 @@ TEST(SubscribeRetryTCP, localDisconnect)
 TEST(SubscribeRetryTCP, localDisconnectNonTransportDisconnect)
 {
   g_count = 0;
-  ros::NodeHandle nh;
-  ros::Subscriber sub = nh.subscribe("roscpp/pubsub_test", 0, callback);
+  miniros::NodeHandle nh;
+  miniros::Subscriber sub = nh.subscribe("roscpp/pubsub_test", 0, callback);
   // wait for initial messages to arrive
-  ros::WallTime start = ros::WallTime::now();
-  while (g_count == 0 && ros::WallTime::now() - start < ros::WallDuration(5.0))
+  miniros::WallTime start = miniros::WallTime::now();
+  while (g_count == 0 && miniros::WallTime::now() - start < miniros::WallDuration(5.0))
   {
-    ros::WallDuration(0.01).sleep();
-    ros::spinOnce();
+    miniros::WallDuration(0.01).sleep();
+    miniros::spinOnce();
   }
 
   ASSERT_GT(g_count, 0);
 
-  ros::ConnectionManager::instance()->clear(ros::Connection::HeaderError);
+  miniros::ConnectionManager::instance()->clear(miniros::Connection::HeaderError);
 
   // spin for a bit to make sure all previous messages have arrived
-  start = ros::WallTime::now();
-  while (ros::WallTime::now() - start < ros::WallDuration(1.0))
+  start = miniros::WallTime::now();
+  while (miniros::WallTime::now() - start < miniros::WallDuration(1.0))
   {
-    ros::WallDuration(0.01).sleep();
-    ros::spinOnce();
+    miniros::WallDuration(0.01).sleep();
+    miniros::spinOnce();
   }
 
   g_count = 0;
   // make sure we did not reconnect
-  start = ros::WallTime::now();
-  while (g_count == 0 && ros::WallTime::now() - start < ros::WallDuration(5.0))
+  start = miniros::WallTime::now();
+  while (g_count == 0 && miniros::WallTime::now() - start < miniros::WallDuration(5.0))
   {
-    ros::WallDuration(0.01).sleep();
-    ros::spinOnce();
+    miniros::WallDuration(0.01).sleep();
+    miniros::spinOnce();
   }
 
   ASSERT_EQ(g_count, 0);
@@ -117,32 +117,32 @@ TEST(SubscribeRetryTCP, localDisconnectNonTransportDisconnect)
 TEST(SubscribeRetryTCP, remoteDisconnect)
 {
   g_count = 0;
-  ros::NodeHandle nh;
-  ros::Subscriber sub = nh.subscribe("roscpp/pubsub_test", 0, callback);
+  miniros::NodeHandle nh;
+  miniros::Subscriber sub = nh.subscribe("roscpp/pubsub_test", 0, callback);
   // wait for initial messages to arrive
-  ros::WallTime start = ros::WallTime::now();
-  while (g_count == 0 && ros::WallTime::now() - start < ros::WallDuration(5.0))
+  miniros::WallTime start = miniros::WallTime::now();
+  while (g_count == 0 && miniros::WallTime::now() - start < miniros::WallDuration(5.0))
   {
-    ros::WallDuration(0.01).sleep();
-    ros::spinOnce();
+    miniros::WallDuration(0.01).sleep();
+    miniros::spinOnce();
   }
 
   ASSERT_GT(g_count, 0);
 
   roscpp::Empty::Request req;
   roscpp::Empty::Response resp;
-  ros::service::call("/publish_constantly/debug/close_all_connections", req, resp);
+  miniros::service::call("/publish_constantly/debug/close_all_connections", req, resp);
 
   // spin to make sure all previous messages have arrived
-  ros::spinOnce();
+  miniros::spinOnce();
 
   g_count = 0;
   // wait for reconnect/new messages to arrive
-  start = ros::WallTime::now();
-  while (g_count == 0 && ros::WallTime::now() - start < ros::WallDuration(5.0))
+  start = miniros::WallTime::now();
+  while (g_count == 0 && miniros::WallTime::now() - start < miniros::WallDuration(5.0))
   {
-    ros::WallDuration(0.01).sleep();
-    ros::spinOnce();
+    miniros::WallDuration(0.01).sleep();
+    miniros::spinOnce();
   }
 
   ASSERT_GT(g_count, 0);
@@ -151,7 +151,7 @@ TEST(SubscribeRetryTCP, remoteDisconnect)
 int main(int argc, char** argv)
 {
   testing::InitGoogleTest(&argc, argv);
-  ros::init(argc, argv, "subscribe_retry_tcp");
-  ros::NodeHandle nh;
+  miniros::init(argc, argv, "subscribe_retry_tcp");
+  miniros::NodeHandle nh;
   return RUN_ALL_TESTS();
 }

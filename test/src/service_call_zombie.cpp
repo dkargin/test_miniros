@@ -35,7 +35,7 @@
 
 #include <gtest/gtest.h>
 
-#include "ros/ros.h"
+#include <miniros/ros.h>
 #include "ros/time.h"
 #include "ros/service.h"
 #include "ros/connection.h"
@@ -46,10 +46,10 @@
 
 TEST(SrvCall, callPhantomService)
 {
-  ros::NodeHandle nh;
+  miniros::NodeHandle nh;
   for(int i = 0; i < 200; ++i)
   {
-    ros::ServiceClient handle = nh.serviceClient<test_roscpp::TestStringString>("phantom_service");
+    miniros::ServiceClient handle = nh.serviceClient<test_roscpp::TestStringString>("phantom_service");
 
     test_roscpp::TestStringString::Request req;
     test_roscpp::TestStringString::Request res;
@@ -62,8 +62,8 @@ main(int argc, char** argv)
 {
   testing::InitGoogleTest(&argc, argv);
 
-  ros::init(argc, argv, "service_call");
-  ros::NodeHandle nh;
+  miniros::init(argc, argv, "service_call");
+  miniros::NodeHandle nh;
 
 #ifndef _WIN32
   sleep(10);

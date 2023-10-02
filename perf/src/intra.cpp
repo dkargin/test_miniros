@@ -36,7 +36,7 @@
 #include "test_roscpp/ThroughputMessage.h"
 #include "test_roscpp/LatencyMessage.h"
 
-#include <ros/ros.h>
+#include <miniros/ros.h>
 #include <ros/callback_queue.h>
 
 #include <boost/thread.hpp>
@@ -57,7 +57,7 @@ public:
 
 private:
   void sendThread(boost::barrier* all_connected);
-  void receiveThread(boost::barrier* all_started, boost::barrier* all_start, ros::WallTime* end_time);
+  void receiveThread(boost::barrier* all_started, boost::barrier* all_start, miniros::WallTime* end_time);
 
   void callback(const test_roscpp::ThroughputMessageConstPtr& msg);
 
@@ -68,7 +68,7 @@ private:
     uint64_t bytes_received;
     uint64_t messages_received;
 
-    ros::WallTime last_recv_time;
+    miniros::WallTime last_recv_time;
   };
   boost::thread_specific_ptr<ReceiveThreadResult> receive_thread_result_;
   std::vector<boost::shared_ptr<ReceiveThreadResult> > receive_results_;
@@ -78,13 +78,13 @@ private:
     uint64_t bytes_sent;
     uint64_t messages_sent;
 
-    ros::WallTime first_send_time;
+    miniros::WallTime first_send_time;
   };
   boost::thread_specific_ptr<SendThreadResult> send_thread_result_;
   std::vector<boost::shared_ptr<SendThreadResult> > send_results_;
 
-  ros::CallbackQueue queue_;
-  std::vector<ros::Publisher> pubs_;
+  miniros::CallbackQueue queue_;
+  std::vector<miniros::Publisher> pubs_;
 
   boost::thread_group receive_threads_;
   boost::thread_group send_threads_;
@@ -109,15 +109,15 @@ void ThroughputTest::callback(const test_roscpp::ThroughputMessageConstPtr& msg)
 {
   ReceiveThreadResult& r = *receive_thread_result_;
 
-  r.bytes_received += ros::serialization::Serializer<test_roscpp::ThroughputMessage>::serializedLength(*msg) + 4; // 4 byte message length field
+  r.bytes_received += miniros::serialization::Serializer<test_roscpp::ThroughputMessage>::serializedLength(*msg) + 4; // 4 byte message length field
   ++r.messages_received;
 
-  r.last_recv_time = ros::WallTime::now();
+  r.last_recv_time = miniros::WallTime::now();
 
   //ROS_INFO_STREAM("Received message " << r.messages_received);
 }
 
-void ThroughputTest::receiveThread(boost::barrier* all_ready, boost::barrier* all_start, ros::WallTime* end_time)
+void ThroughputTest::receiveThread(boost::barrier* all_ready, boost::barrier* all_start, miniros::WallTime* end_time)
 {
   receive_thread_result_.reset(new ReceiveThreadResult);
 
@@ -129,13 +129,13 @@ void ThroughputTest::receiveThread(boost::barrier* all_ready, boost::barrier* al
 
   all_ready->wait();
   all_start->wait();
-  ros::WallTime local_end_time = *end_time;
+  miniros::WallTime local_end_time = *end_time;
 
   ROS_INFO_STREAM("Receive thread [" << boost::this_thread::get_id() << "] running");
 
-  while (ros::WallTime::now() < local_end_time)
+  while (miniros::WallTime::now() < local_end_time)
   {
-    queue_.callOne(ros::WallDuration(0.01));
+    queue_.callOne(miniros::WallDuration(0.01));
   }
 
   ROS_INFO_STREAM("Receive thread [" << boost::this_thread::get_id() << "] adding results and exiting");
@@ -149,9 +149,9 @@ void ThroughputTest::sendThread(boost::barrier* all_connected)
   send_thread_result_.reset(new SendThreadResult);
   SendThreadResult& r = *send_thread_result_;
 
-  ros::NodeHandle nh;
+  miniros::NodeHandle nh;
   nh.setCallbackQueue(&queue_);
-  std::vector<ros::Publisher> pubs;
+  std::vector<miniros::Publisher> pubs;
   for (uint32_t i = 0; i < streams_; ++i)
   {
     std::stringstream ss;
@@ -186,7 +186,7 @@ void ThroughputTest::sendThread(boost::barrier* all_connected)
 
   ROS_INFO_STREAM("Publish thread [" << boost::this_thread::get_id() << "] all connections established, beginning to publish");
 
-  r.first_send_time = ros::WallTime::now();
+  r.first_send_time = miniros::WallTime::now();
   r.bytes_sent = 0;
   r.messages_sent = 0;
 
@@ -200,7 +200,7 @@ void ThroughputTest::sendThread(boost::barrier* all_connected)
         pubs[j].publish(msg);
 
         ++r.messages_sent;
-        r.bytes_sent += ros::serialization::Serializer<test_roscpp::ThroughputMessage>::serializedLength(*msg) + 4;
+        r.bytes_sent += miniros::serialization::Serializer<test_roscpp::ThroughputMessage>::serializedLength(*msg) + 4;
       }
 
       boost::this_thread::yield();
@@ -220,23 +220,23 @@ ThroughputResult ThroughputTest::run()
 {
   ROS_INFO("Starting receive threads");
   ThroughputResult r;
-  r.test_start = ros::WallTime::now();
+  r.test_start = miniros::WallTime::now();
 
-  ros::NodeHandle nh;
+  miniros::NodeHandle nh;
   nh.setCallbackQueue(&queue_);
 
-  std::vector<ros::Subscriber> subs;
+  std::vector<miniros::Subscriber> subs;
   for (uint32_t i = 0; i < streams_; ++i)
   {
     std::stringstream ss;
     ss << "throughput_perf_test_" << i;
-    subs.push_back(nh.subscribe(ss.str(), 0, &ThroughputTest::callback, this, ros::TransportHints().tcpNoDelay()));
+    subs.push_back(nh.subscribe(ss.str(), 0, &ThroughputTest::callback, this, miniros::TransportHints().tcpNoDelay()));
   }
 
   boost::barrier sender_all_connected(sender_threads_ + 1);
   boost::barrier receiver_all_ready(receiver_threads_ + 1);
   boost::barrier receiver_start(receiver_threads_ + 1);
-  ros::WallTime test_end_time;
+  miniros::WallTime test_end_time;
 
   for (uint32_t i = 0; i < receiver_threads_; ++i)
   {
@@ -249,10 +249,10 @@ ThroughputResult ThroughputTest::run()
   }
 
   receiver_all_ready.wait();
-  test_end_time = ros::WallTime::now() + ros::WallDuration(test_duration_);
+  test_end_time = miniros::WallTime::now() + miniros::WallDuration(test_duration_);
   receiver_start.wait();
 
-  ros::WallTime pub_start = ros::WallTime::now();
+  miniros::WallTime pub_start = miniros::WallTime::now();
   sender_all_connected.wait();
 
   receive_threads_.join_all();
@@ -264,7 +264,7 @@ ThroughputResult ThroughputTest::run()
 
   ROS_INFO("Collating results");
 
-  r.test_end = ros::WallTime::now();
+  r.test_end = miniros::WallTime::now();
 
   r.bytes_per_second = 0;
   r.message_size = message_size_;
@@ -277,7 +277,7 @@ ThroughputResult ThroughputTest::run()
   r.test_duration = test_duration_;
   r.streams = streams_;
 
-  ros::WallTime rec_end;
+  miniros::WallTime rec_end;
   {
     std::vector<boost::shared_ptr<ReceiveThreadResult> >::iterator it = receive_results_.begin();
     std::vector<boost::shared_ptr<ReceiveThreadResult> >::iterator end = receive_results_.end();
@@ -341,8 +341,8 @@ private:
   void sendThread(boost::barrier* b, uint32_t i);
   void receiveThread();
 
-  void receiveCallback(const test_roscpp::LatencyMessageConstPtr& msg, ros::Publisher& pub);
-  void sendCallback(const test_roscpp::LatencyMessageConstPtr& msg, ros::Publisher& pub, uint32_t thread_index);
+  void receiveCallback(const test_roscpp::LatencyMessageConstPtr& msg, miniros::Publisher& pub);
+  void sendCallback(const test_roscpp::LatencyMessageConstPtr& msg, miniros::Publisher& pub, uint32_t thread_index);
 
   boost::mutex mutex_;
 
@@ -355,7 +355,7 @@ private:
   boost::thread_specific_ptr<ThreadResult> thread_result_;
   std::vector<boost::shared_ptr<ThreadResult> > results_;
 
-  ros::CallbackQueue receive_queue_;
+  miniros::CallbackQueue receive_queue_;
 
   boost::thread_group send_threads_;
 
@@ -375,16 +375,16 @@ LatencyTest::LatencyTest(uint32_t count_per_stream, uint32_t streams, uint32_t m
 {
 }
 
-void LatencyTest::receiveCallback(const test_roscpp::LatencyMessageConstPtr& msg, ros::Publisher& pub)
+void LatencyTest::receiveCallback(const test_roscpp::LatencyMessageConstPtr& msg, miniros::Publisher& pub)
 {
-  ros::WallTime receipt_time = ros::WallTime::now();
+  miniros::WallTime receipt_time = miniros::WallTime::now();
   test_roscpp::LatencyMessagePtr reply = boost::const_pointer_cast<test_roscpp::LatencyMessage>(msg);
   reply->receipt_time = receipt_time.toSec();
   pub.publish(reply);
   //ROS_INFO("Receiver received message %d", msg->count);
 }
 
-void LatencyTest::sendCallback(const test_roscpp::LatencyMessageConstPtr& msg, ros::Publisher& pub, uint32_t thread_index)
+void LatencyTest::sendCallback(const test_roscpp::LatencyMessageConstPtr& msg, miniros::Publisher& pub, uint32_t thread_index)
 {
   if (msg->thread_index != thread_index)
   {
@@ -395,7 +395,7 @@ void LatencyTest::sendCallback(const test_roscpp::LatencyMessageConstPtr& msg, r
   ++thread_result_->message_count;
 
   test_roscpp::LatencyMessagePtr reply = boost::const_pointer_cast<test_roscpp::LatencyMessage>(msg);
-  reply->publish_time = ros::WallTime::now().toSec();
+  reply->publish_time = miniros::WallTime::now().toSec();
   ++reply->count;
 
   //ROS_INFO("Sender received return message %d", msg->count);
@@ -411,11 +411,11 @@ void LatencyTest::sendThread(boost::barrier* all_connected, uint32_t thread_inde
   thread_result_.reset(new ThreadResult);
   ThreadResult& r = *thread_result_;
 
-  ros::NodeHandle nh;
-  ros::CallbackQueue queue;
+  miniros::NodeHandle nh;
+  miniros::CallbackQueue queue;
   nh.setCallbackQueue(&queue);
-  std::vector<ros::Publisher> pubs;
-  std::vector<ros::Subscriber> subs;
+  std::vector<miniros::Publisher> pubs;
+  std::vector<miniros::Subscriber> subs;
   pubs.reserve(streams_);
   for (uint32_t i = 0; i < streams_; ++i)
   {
@@ -424,7 +424,7 @@ void LatencyTest::sendThread(boost::barrier* all_connected, uint32_t thread_inde
     pubs.push_back(nh.advertise<test_roscpp::LatencyMessage>(ss.str(), 0));
 
     ss << "_return";
-    subs.push_back(nh.subscribe<test_roscpp::LatencyMessage>(ss.str(), 0, boost::bind(&LatencyTest::sendCallback, this, _1, boost::ref(pubs[i]), thread_index), ros::VoidConstPtr(), ros::TransportHints().tcpNoDelay()));
+    subs.push_back(nh.subscribe<test_roscpp::LatencyMessage>(ss.str(), 0, boost::bind(&LatencyTest::sendCallback, this, _1, boost::ref(pubs[i]), thread_index), miniros::VoidConstPtr(), miniros::TransportHints().tcpNoDelay()));
   }
 
   bool cont = true;
@@ -458,13 +458,13 @@ void LatencyTest::sendThread(boost::barrier* all_connected, uint32_t thread_inde
   const uint32_t total_messages = count * streams;
   for (uint32_t j = 0; j < streams; ++j)
   {
-    messages[j]->publish_time = ros::WallTime::now().toSec();
+    messages[j]->publish_time = miniros::WallTime::now().toSec();
     pubs[j].publish(messages[j]);
   }
 
   while (r.latencies.size() < total_messages)
   {
-    queue.callAvailable(ros::WallDuration(0.01));
+    queue.callAvailable(miniros::WallDuration(0.01));
   }
 
   ROS_INFO_STREAM("Publish thread [" << boost::this_thread::get_id() << "] exiting");
@@ -477,13 +477,13 @@ LatencyResult LatencyTest::run()
 {
   ROS_INFO("Starting receive threads");
   LatencyResult r;
-  r.test_start = ros::WallTime::now();
+  r.test_start = miniros::WallTime::now();
 
-  ros::NodeHandle nh;
+  miniros::NodeHandle nh;
   nh.setCallbackQueue(&receive_queue_);
 
-  std::vector<ros::Subscriber> subs;
-  std::vector<ros::Publisher> pubs;
+  std::vector<miniros::Subscriber> subs;
+  std::vector<miniros::Publisher> pubs;
   pubs.reserve(streams_ * sender_threads_);
   for (uint32_t i = 0; i < streams_; ++i)
   {
@@ -493,12 +493,12 @@ LatencyResult LatencyTest::run()
     ss << "_return";
     std::string pub_topic = ss.str();
     pubs.push_back(nh.advertise<test_roscpp::LatencyMessage>(pub_topic, 0));
-    subs.push_back(nh.subscribe<test_roscpp::LatencyMessage>(sub_topic, 0, boost::bind(&LatencyTest::receiveCallback, this, _1, boost::ref(pubs.back())), ros::VoidConstPtr(), ros::TransportHints().tcpNoDelay()));
+    subs.push_back(nh.subscribe<test_roscpp::LatencyMessage>(sub_topic, 0, boost::bind(&LatencyTest::receiveCallback, this, _1, boost::ref(pubs.back())), miniros::VoidConstPtr(), miniros::TransportHints().tcpNoDelay()));
   }
 
   boost::barrier all_connected(1 + sender_threads_);
 
-  ros::WallTime pub_start = ros::WallTime::now();
+  miniros::WallTime pub_start = miniros::WallTime::now();
   ROS_INFO("Starting publish threads");
   for (uint32_t i = 0; i < sender_threads_; ++i)
   {
@@ -523,7 +523,7 @@ LatencyResult LatencyTest::run()
   all_connected.wait();
   ROS_INFO("All connections established");
 
-  ros::AsyncSpinner receive_spinner(receiver_threads_, &receive_queue_);
+  miniros::AsyncSpinner receive_spinner(receiver_threads_, &receive_queue_);
   receive_spinner.start();
 
   send_threads_.join_all();
@@ -531,7 +531,7 @@ LatencyResult LatencyTest::run()
 
   ROS_INFO("Collating results");
 
-  r.test_end = ros::WallTime::now();
+  r.test_end = miniros::WallTime::now();
 
   r.latency_avg = 0;
   r.latency_max = 0;
@@ -601,8 +601,8 @@ public:
 
 private:
 
-  void receiveCallback(const test_roscpp::LatencyMessageConstPtr& msg, ros::Publisher& pub);
-  void sendCallback(const test_roscpp::LatencyMessageConstPtr& msg, ros::Publisher& pub);
+  void receiveCallback(const test_roscpp::LatencyMessageConstPtr& msg, miniros::Publisher& pub);
+  void sendCallback(const test_roscpp::LatencyMessageConstPtr& msg, miniros::Publisher& pub);
 
   struct Result
   {
@@ -610,7 +610,7 @@ private:
   };
   Result result_;
 
-  ros::CallbackQueue receive_queue_;
+  miniros::CallbackQueue receive_queue_;
 
   uint32_t message_count_;
 };
@@ -620,21 +620,21 @@ STLatencyTest::STLatencyTest(uint32_t message_count)
 {
 }
 
-void STLatencyTest::receiveCallback(const test_roscpp::LatencyMessageConstPtr& msg, ros::Publisher& pub)
+void STLatencyTest::receiveCallback(const test_roscpp::LatencyMessageConstPtr& msg, miniros::Publisher& pub)
 {
-  ros::WallTime receipt_time = ros::WallTime::now();
+  miniros::WallTime receipt_time = miniros::WallTime::now();
   test_roscpp::LatencyMessagePtr reply = boost::const_pointer_cast<test_roscpp::LatencyMessage>(msg);
   reply->receipt_time = receipt_time.toSec();
   pub.publish(reply);
   //ROS_INFO("Receiver received message %d", msg->count);
 }
 
-void STLatencyTest::sendCallback(const test_roscpp::LatencyMessageConstPtr& msg, ros::Publisher& pub)
+void STLatencyTest::sendCallback(const test_roscpp::LatencyMessageConstPtr& msg, miniros::Publisher& pub)
 {
   result_.latencies.push_back(msg->receipt_time - msg->publish_time);
 
   test_roscpp::LatencyMessagePtr reply = boost::const_pointer_cast<test_roscpp::LatencyMessage>(msg);
-  reply->publish_time = ros::WallTime::now().toSec();
+  reply->publish_time = miniros::WallTime::now().toSec();
   ++reply->count;
 
   //ROS_INFO("Sender received return message %d", msg->count);
@@ -649,15 +649,15 @@ STLatencyResult STLatencyTest::run()
 {
   ROS_INFO("Starting receive threads");
   STLatencyResult r;
-  r.test_start = ros::WallTime::now();
+  r.test_start = miniros::WallTime::now();
 
-  ros::NodeHandle nh;
+  miniros::NodeHandle nh;
   nh.setCallbackQueue(&receive_queue_);
 
-  ros::Publisher recv_pub = nh.advertise<test_roscpp::LatencyMessage>("stlatency_perf_test_return", 0);
-  ros::Subscriber recv_sub = nh.subscribe<test_roscpp::LatencyMessage>("stlatency_perf_test", 0, boost::bind(&STLatencyTest::receiveCallback, this, _1, boost::ref(recv_pub)), ros::VoidConstPtr(), ros::TransportHints().tcpNoDelay());
-  ros::Publisher send_pub = nh.advertise<test_roscpp::LatencyMessage>("stlatency_perf_test", 0);
-  ros::Subscriber send_sub = nh.subscribe<test_roscpp::LatencyMessage>("stlatency_perf_test_return", 0, boost::bind(&STLatencyTest::sendCallback, this, _1, boost::ref(send_pub)), ros::VoidConstPtr(), ros::TransportHints().tcpNoDelay());
+  miniros::Publisher recv_pub = nh.advertise<test_roscpp::LatencyMessage>("stlatency_perf_test_return", 0);
+  miniros::Subscriber recv_sub = nh.subscribe<test_roscpp::LatencyMessage>("stlatency_perf_test", 0, boost::bind(&STLatencyTest::receiveCallback, this, _1, boost::ref(recv_pub)), miniros::VoidConstPtr(), miniros::TransportHints().tcpNoDelay());
+  miniros::Publisher send_pub = nh.advertise<test_roscpp::LatencyMessage>("stlatency_perf_test", 0);
+  miniros::Subscriber send_sub = nh.subscribe<test_roscpp::LatencyMessage>("stlatency_perf_test_return", 0, boost::bind(&STLatencyTest::sendCallback, this, _1, boost::ref(send_pub)), miniros::VoidConstPtr(), miniros::TransportHints().tcpNoDelay());
 
   ROS_INFO("Waiting for all connections to establish");
 
@@ -665,20 +665,20 @@ STLatencyResult STLatencyTest::run()
   while (cont)
   {
     cont = recv_pub.getNumSubscribers() == 0 || send_pub.getNumSubscribers() == 0;
-    ros::WallDuration(0.001).sleep();
+    miniros::WallDuration(0.001).sleep();
   }
 
   ROS_INFO("All connections established");
 
   test_roscpp::LatencyMessagePtr msg(boost::make_shared<test_roscpp::LatencyMessage>());
-  msg->publish_time = ros::WallTime::now().toSec();
+  msg->publish_time = miniros::WallTime::now().toSec();
   send_pub.publish(msg);
   while (msg->count < message_count_)
   {
-    receive_queue_.callAvailable(ros::WallDuration(0.1));
+    receive_queue_.callAvailable(miniros::WallDuration(0.1));
   }
 
-  r.test_end = ros::WallTime::now();
+  r.test_end = miniros::WallTime::now();
 
   r.latency_avg = 0;
   r.latency_max = 0;

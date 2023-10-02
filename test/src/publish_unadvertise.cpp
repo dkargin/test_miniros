@@ -36,7 +36,7 @@
 #include <time.h>
 #include <stdlib.h>
 
-#include "ros/ros.h"
+#include <miniros/ros.h>
 #include <test_roscpp/TestArray.h>
 
 static int g_argc;
@@ -48,10 +48,10 @@ bool advertised;
 class Publications : public testing::Test
 {
 public:
-  ros::NodeHandle nh_;
-  ros::Publisher pub_;
+  miniros::NodeHandle nh_;
+  miniros::Publisher pub_;
 
-  void subscriberCallback(const ros::SingleSubscriberPublisher&)
+  void subscriberCallback(const miniros::SingleSubscriberPublisher&)
   {
     ROS_INFO("subscriberCallback invoked");
     if(!advertised)
@@ -91,12 +91,12 @@ TEST_F(Publications, pubUnadvertise)
   advertised = true;
   ROS_INFO("advertising");
   ASSERT_TRUE(adv());
-  ros::Time t1(ros::Time::now()+ros::Duration(2.0));
+  miniros::Time t1(miniros::Time::now()+miniros::Duration(2.0));
 
-  while(ros::Time::now() < t1 && !failure)
+  while(miniros::Time::now() < t1 && !failure)
   {
-    ros::WallDuration(0.01).sleep();
-    ros::spinOnce();
+    miniros::WallDuration(0.01).sleep();
+    miniros::spinOnce();
   }
 
   unadv();
@@ -104,11 +104,11 @@ TEST_F(Publications, pubUnadvertise)
   ROS_INFO("unadvertised");
   advertised = false;
 
-  ros::Time t2(ros::Time::now()+ros::Duration(2.0));
-  while(ros::Time::now() < t2 && !failure)
+  miniros::Time t2(miniros::Time::now()+miniros::Duration(2.0));
+  while(miniros::Time::now() < t2 && !failure)
   {
-    ros::WallDuration(0.01).sleep();
-    ros::spinOnce();
+    miniros::WallDuration(0.01).sleep();
+    miniros::spinOnce();
   }
 
   advertised = true;
@@ -125,7 +125,7 @@ TEST_F(Publications, pubUnadvertise)
 int
 main(int argc, char** argv)
 {
-  ros::init(argc, argv, "publish_unadvertise");
+  miniros::init(argc, argv, "publish_unadvertise");
   testing::InitGoogleTest(&argc, argv);
   g_argc = argc;
   g_argv = argv;

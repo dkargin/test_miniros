@@ -37,7 +37,7 @@
 #include "ros/init.h"
 #include "ros/names.h"
 
-using namespace ros;
+using namespace miniros;
 
 TEST(Names, validation)
 {
@@ -82,7 +82,7 @@ TEST(Names, init_empty_node_name)
 {
   int argc = 0;
   char** argv = NULL;
-  EXPECT_THROW(ros::init(argc, argv, ""), ros::InvalidNameException);
+  EXPECT_THROW(miniros::init(argc, argv, ""), miniros::InvalidNameException);
 }
 
 int

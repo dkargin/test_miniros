@@ -39,7 +39,7 @@
 
 #include <stdlib.h>
 
-#include "ros/ros.h"
+#include <miniros/ros.h>
 
 uint32_t g_msg_constructor = 0;
 uint32_t g_msg2_constructor = 0;
@@ -186,23 +186,23 @@ TEST(IntraprocessSubscriptions, noCopy)
   g_msg.reset();
   g_msg_constructor = 0;
 
-  ros::NodeHandle nh;
-  ros::Subscriber sub = nh.subscribe("test", 0, messageCallback);
-  ros::Publisher pub = nh.advertise<Msg>("test", 0);
+  miniros::NodeHandle nh;
+  miniros::Subscriber sub = nh.subscribe("test", 0, messageCallback);
+  miniros::Publisher pub = nh.advertise<Msg>("test", 0);
 
   MsgConstPtr msg(boost::make_shared<Msg>());
 
   while (pub.getNumSubscribers() == 0)
   {
-    ros::Duration(0.01).sleep();
+    miniros::Duration(0.01).sleep();
   }
 
   pub.publish(msg);
 
   while (!g_msg)
   {
-    ros::spinOnce();
-    ros::Duration(0.01).sleep();
+    miniros::spinOnce();
+    miniros::Duration(0.01).sleep();
   }
 
   ASSERT_TRUE(g_msg);
@@ -217,23 +217,23 @@ TEST(IntraprocessSubscriptions, differentRTTI)
   g_msg_constructor = 0;
   g_msg.reset();
 
-  ros::NodeHandle nh;
-  ros::Subscriber sub = nh.subscribe("test", 0, messageCallback);
-  ros::Publisher pub = nh.advertise<Msg2>("test", 0);
+  miniros::NodeHandle nh;
+  miniros::Subscriber sub = nh.subscribe("test", 0, messageCallback);
+  miniros::Publisher pub = nh.advertise<Msg2>("test", 0);
 
   Msg2ConstPtr msg(boost::make_shared<Msg2>());
 
   while (pub.getNumSubscribers() == 0)
   {
-    ros::Duration(0.01).sleep();
+    miniros::Duration(0.01).sleep();
   }
 
   pub.publish(msg);
 
   while (!g_msg)
   {
-    ros::spinOnce();
-    ros::Duration(0.01).sleep();
+    miniros::spinOnce();
+    miniros::Duration(0.01).sleep();
   }
 
   ASSERT_TRUE(g_msg);
@@ -254,24 +254,24 @@ TEST(IntraprocessSubscriptions, noCopyAndDifferentRTTI)
 {
   g_msg.reset();
 
-  ros::NodeHandle nh;
-  ros::Subscriber sub1 = nh.subscribe("test", 0, messageCallback);
-  ros::Subscriber sub2 = nh.subscribe("test", 0, messageCallback2);
-  ros::Publisher pub = nh.advertise<Msg2>("test", 0);
+  miniros::NodeHandle nh;
+  miniros::Subscriber sub1 = nh.subscribe("test", 0, messageCallback);
+  miniros::Subscriber sub2 = nh.subscribe("test", 0, messageCallback2);
+  miniros::Publisher pub = nh.advertise<Msg2>("test", 0);
 
   Msg2ConstPtr msg(boost::make_shared<Msg2>());
 
   while (pub.getNumSubscribers() == 0)
   {
-    ros::Duration(0.01).sleep();
+    miniros::Duration(0.01).sleep();
   }
 
   pub.publish(msg);
 
   while (!g_msg || !g_msg2)
   {
-    ros::spinOnce();
-    ros::Duration(0.01).sleep();
+    miniros::spinOnce();
+    miniros::Duration(0.01).sleep();
   }
 
   ASSERT_TRUE(g_msg);
@@ -288,9 +288,9 @@ TEST(IntraprocessSubscriptions, noCopyAndDifferentRTTI)
 int main(int argc, char** argv)
 {
   testing::InitGoogleTest(&argc, argv);
-  ros::init(argc, argv, "intraprocess_subscriptions");
+  miniros::init(argc, argv, "intraprocess_subscriptions");
 
-  ros::NodeHandle nh;
+  miniros::NodeHandle nh;
 
   return RUN_ALL_TESTS();
 }

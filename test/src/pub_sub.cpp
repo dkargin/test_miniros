@@ -38,19 +38,19 @@
 #include <time.h>
 #include <stdlib.h>
 
-#include "ros/ros.h"
+#include <miniros/ros.h>
 #include <test_roscpp/TestArray.h>
 
 int32_t g_array_size = 1;
 
-void messageCallback(const test_roscpp::TestArrayConstPtr& msg, ros::Publisher pub)
+void messageCallback(const test_roscpp::TestArrayConstPtr& msg, miniros::Publisher pub)
 {
   test_roscpp::TestArray copy = *msg;
   copy.counter++;
 
-  while (ros::ok() && pub.getNumSubscribers() == 0)
+  while (miniros::ok() && pub.getNumSubscribers() == 0)
   {
-    ros::Duration(0.01).sleep();
+    miniros::Duration(0.01).sleep();
   }
 
   pub.publish(copy);
@@ -60,7 +60,7 @@ void messageCallback(const test_roscpp::TestArrayConstPtr& msg, ros::Publisher p
 
 int main(int argc, char** argv)
 {
-  ros::init(argc, argv, "pub_sub");
+  miniros::init(argc, argv, "pub_sub");
 
   if(argc != 2)
   {
@@ -70,10 +70,10 @@ int main(int argc, char** argv)
 
   g_array_size = atoi(argv[1]);
 
-  ros::NodeHandle nh;
+  miniros::NodeHandle nh;
 
-  ros::Publisher pub = nh.advertise<test_roscpp::TestArray>("roscpp/pubsub_test", 1);
-  ros::Subscriber sub = nh.subscribe<test_roscpp::TestArray>("roscpp/subpub_test", 1, boost::bind(messageCallback, _1, pub));
+  miniros::Publisher pub = nh.advertise<test_roscpp::TestArray>("roscpp/pubsub_test", 1);
+  miniros::Subscriber sub = nh.subscribe<test_roscpp::TestArray>("roscpp/subpub_test", 1, boost::bind(messageCallback, _1, pub));
 
-  ros::spin();
+  miniros::spin();
 }

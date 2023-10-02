@@ -32,7 +32,7 @@
 *  POSSIBILITY OF SUCH DAMAGE.
 ********************************************************************/
 
-#include "ros/ros.h"
+#include <miniros/ros.h>
 #include <locale.h>
 #include <gtest/gtest.h>
 
@@ -40,8 +40,8 @@ TEST(Locale, push_pop)
 {
   int argc = 0;
   char argv[1][255] = { "string" };
-  ros::init(argc, (char**)argv, "locale_push_pop");
-  ros::NodeHandle nh;
+  miniros::init(argc, (char**)argv, "locale_push_pop");
+  miniros::NodeHandle nh;
 
   ROS_INFO("locale is %s", setlocale(LC_NUMERIC, 0));
 
@@ -52,7 +52,7 @@ TEST(Locale, push_pop)
       return;
     }
   ROS_INFO("locale now %s", setlocale(LC_NUMERIC, 0));
-  for(unsigned j=0; ros::ok() && j < 5; ++j)
+  for(unsigned j=0; miniros::ok() && j < 5; ++j)
   {
     ROS_INFO("setting parameters...");
 
@@ -68,14 +68,14 @@ TEST(Locale, push_pop)
       FAIL();
     }
 
-    ros::WallDuration(0.1).sleep();
+    miniros::WallDuration(0.1).sleep();
   }
 }
 
 int
 main(int argc, char** argv)
 {
-  ros::init(argc, argv, "locale_push_pop");
+  miniros::init(argc, argv, "locale_push_pop");
   testing::InitGoogleTest(&argc, argv);
   return RUN_ALL_TESTS();
 }

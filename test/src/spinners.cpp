@@ -48,94 +48,94 @@
 #include "ros/node_handle.h"
 #include <boost/thread.hpp>
 
-using namespace ros;
+using namespace miniros;
 
 int argc_;
 char** argv_;
 
-void fire_shutdown(const ros::WallTimerEvent&) {
+void fire_shutdown(const miniros::WallTimerEvent&) {
   ROS_INFO("Asking for shutdown");
-  ros::shutdown();
+  miniros::shutdown();
 }
 
 #define DOIT()                                                  \
-  ros::init(argc_, argv_, "test_spinners");                     \
+  miniros::init(argc_, argv_, "test_spinners");                     \
   NodeHandle nh;                                                \
-  ros::WallTimer t = nh.createWallTimer(ros::WallDuration(2.0), \
+  miniros::WallTimer t = nh.createWallTimer(miniros::WallDuration(2.0), \
                                         &fire_shutdown);        \
   
 TEST(Spinners, spin)
 {
   DOIT();
-  ros::spin(); // will block until ROS shutdown
+  miniros::spin(); // will block until ROS shutdown
 }
 
 TEST(Spinners, spinfail)
 {
   DOIT();
-  boost::thread th(boost::bind(&ros::spin));
-  ros::WallDuration(0.1).sleep(); // wait for thread to be started
+  boost::thread th(boost::bind(&miniros::spin));
+  miniros::WallDuration(0.1).sleep(); // wait for thread to be started
 
-  EXPECT_THROW(ros::spin(), std::runtime_error);
+  EXPECT_THROW(miniros::spin(), std::runtime_error);
 
   SingleThreadedSpinner ss;
-  EXPECT_THROW(ros::spin(ss), std::runtime_error);
+  EXPECT_THROW(miniros::spin(ss), std::runtime_error);
   EXPECT_THROW(ss.spin(), std::runtime_error);
 
   MultiThreadedSpinner ms;
-  EXPECT_THROW(ros::spin(ms), std::runtime_error);
+  EXPECT_THROW(miniros::spin(ms), std::runtime_error);
   EXPECT_THROW(ms.spin(), std::runtime_error);
 
   AsyncSpinner as(2);
   EXPECT_THROW(as.start(), std::runtime_error);
 
-  ros::waitForShutdown();
+  miniros::waitForShutdown();
 }
 
 TEST(Spinners, singlefail)
 {
   DOIT();
   SingleThreadedSpinner ss;
-  boost::thread th(boost::bind(&ros::spin, ss));
-  ros::WallDuration(0.1).sleep(); // wait for thread to be started
+  boost::thread th(boost::bind(&miniros::spin, ss));
+  miniros::WallDuration(0.1).sleep(); // wait for thread to be started
 
-  EXPECT_THROW(ros::spin(), std::runtime_error);
+  EXPECT_THROW(miniros::spin(), std::runtime_error);
 
   SingleThreadedSpinner ss2;
-  EXPECT_THROW(ros::spin(ss2), std::runtime_error);
+  EXPECT_THROW(miniros::spin(ss2), std::runtime_error);
   EXPECT_THROW(ss2.spin(), std::runtime_error);
 
   MultiThreadedSpinner ms;
-  EXPECT_THROW(ros::spin(ms), std::runtime_error);
+  EXPECT_THROW(miniros::spin(ms), std::runtime_error);
   EXPECT_THROW(ms.spin(), std::runtime_error);
 
   AsyncSpinner as(2);
   EXPECT_THROW(as.start(), std::runtime_error);
 
-  ros::waitForShutdown();
+  miniros::waitForShutdown();
 }
 
 TEST(Spinners, multi)
 {
   DOIT();
   MultiThreadedSpinner ms;
-  ros::spin(ms); // will block until ROS shutdown
+  miniros::spin(ms); // will block until ROS shutdown
 }
 
 TEST(Spinners, multifail)
 {
   DOIT();
   MultiThreadedSpinner ms;
-  boost::thread th(boost::bind(&ros::spin, ms));
-  ros::WallDuration(0.1).sleep(); // wait for thread to be started
+  boost::thread th(boost::bind(&miniros::spin, ms));
+  miniros::WallDuration(0.1).sleep(); // wait for thread to be started
 
   SingleThreadedSpinner ss2;
-  EXPECT_THROW(ros::spin(ss2), std::runtime_error);
+  EXPECT_THROW(miniros::spin(ss2), std::runtime_error);
   EXPECT_THROW(ss2.spin(), std::runtime_error);
 
   // running another multi-threaded spinner is allowed
   MultiThreadedSpinner ms2;
-  ros::spin(ms2); // will block until ROS shutdown
+  miniros::spin(ms2); // will block until ROS shutdown
 }
 
 TEST(Spinners, async)
@@ -150,14 +150,14 @@ TEST(Spinners, async)
   as2.stop();
 
   SingleThreadedSpinner ss;
-  EXPECT_THROW(ros::spin(ss), std::runtime_error);
+  EXPECT_THROW(miniros::spin(ss), std::runtime_error);
   EXPECT_THROW(ss.spin(), std::runtime_error);
 
   // running a multi-threaded spinner is allowed
   MultiThreadedSpinner ms;
-  ros::spin(ms); // will block until ROS shutdown
+  miniros::spin(ms); // will block until ROS shutdown
 
-  ros::waitForShutdown();
+  miniros::waitForShutdown();
 }
 
 

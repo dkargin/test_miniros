@@ -44,7 +44,7 @@
 #include <boost/bind.hpp>
 #include <boost/thread.hpp>
 
-using namespace ros;
+using namespace miniros;
 
 int set_nonblocking(int &socket)
 {

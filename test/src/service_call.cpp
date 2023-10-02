@@ -37,7 +37,7 @@
 
 #include <gtest/gtest.h>
 
-#include "ros/ros.h"
+#include <miniros/ros.h>
 #include "ros/time.h"
 #include "ros/service.h"
 #include "ros/connection.h"
@@ -52,8 +52,8 @@ TEST(SrvCall, callSrv)
 
   req.str = std::string("case_FLIP");
 
-  ASSERT_TRUE(ros::service::waitForService("service_adv"));
-  ASSERT_TRUE(ros::service::call("service_adv", req, res));
+  ASSERT_TRUE(miniros::service::waitForService("service_adv"));
+  ASSERT_TRUE(miniros::service::call("service_adv", req, res));
 
   ASSERT_STREQ(res.str.c_str(), "CASE_flip");
 }
@@ -65,8 +65,8 @@ TEST(SrvCall, callSrvUnicode)
 
   req.str = std::string("ロボット");
 
-  ASSERT_TRUE(ros::service::waitForService("service_adv"));
-  ASSERT_TRUE(ros::service::call("service_adv", req, res));
+  ASSERT_TRUE(miniros::service::waitForService("service_adv"));
+  ASSERT_TRUE(miniros::service::call("service_adv", req, res));
 
   ASSERT_STREQ(res.str.c_str(), "ロボット");
 }
@@ -78,17 +78,17 @@ TEST(SrvCall, callSrvMultipleTimes)
 
   req.str = std::string("case_FLIP");
 
-  ASSERT_TRUE(ros::service::waitForService("service_adv"));
+  ASSERT_TRUE(miniros::service::waitForService("service_adv"));
 
-  ros::Time start = ros::Time::now();
+  miniros::Time start = miniros::Time::now();
 
   for (int i = 0; i < 100; ++i)
   {
-    ASSERT_TRUE(ros::service::call("service_adv", req, res));
+    ASSERT_TRUE(miniros::service::call("service_adv", req, res));
   }
 
-  ros::Time end = ros::Time::now();
-  ros::Duration d = end - start;
+  miniros::Time end = miniros::Time::now();
+  miniros::Duration d = end - start;
   printf("100 calls took %f secs\n", d.toSec());
 
   ASSERT_STREQ(res.str.c_str(), "CASE_flip");
@@ -99,11 +99,11 @@ TEST(SrvCall, callSrvWithWrongType)
   test_roscpp::BadTestStringString::Request req;
   test_roscpp::BadTestStringString::Response res;
 
-  ASSERT_TRUE(ros::service::waitForService("service_adv"));
+  ASSERT_TRUE(miniros::service::waitForService("service_adv"));
 
   for ( int i = 0; i < 4; ++i )
   {
-    bool call_result = ros::service::call("service_adv", req, res);
+    bool call_result = miniros::service::call("service_adv", req, res);
     ASSERT_FALSE(call_result);
   }
 }
@@ -118,19 +118,19 @@ TEST(SrvCall, callSrvHandle)
   std::map<std::string, std::string> header;
   header["test1"] = "testing 1";
   header["test2"] = "testing 2";
-  ros::NodeHandle nh;
-  ros::ServiceClient handle = nh.serviceClient<test_roscpp::TestStringString>("service_adv", false, header);
+  miniros::NodeHandle nh;
+  miniros::ServiceClient handle = nh.serviceClient<test_roscpp::TestStringString>("service_adv", false, header);
   ASSERT_TRUE(handle.waitForExistence());
 
-  ros::Time start = ros::Time::now();
+  miniros::Time start = miniros::Time::now();
 
   for (int i = 0; i < 100; ++i)
   {
     ASSERT_TRUE(handle.call(req, res));
   }
 
-  ros::Time end = ros::Time::now();
-  ros::Duration d = end - start;
+  miniros::Time end = miniros::Time::now();
+  miniros::Duration d = end - start;
   printf("100 calls took %f secs\n", d.toSec());
 
   ASSERT_STREQ(res.str.c_str(), "CASE_flip");
@@ -143,23 +143,23 @@ TEST(SrvCall, callSrvPersistentHandle)
 
   req.str = std::string("case_FLIP");
 
-  ASSERT_TRUE(ros::service::waitForService("service_adv"));
+  ASSERT_TRUE(miniros::service::waitForService("service_adv"));
 
   std::map<std::string, std::string> header;
   header["test1"] = "testing 1";
   header["test2"] = "testing 2";
-  ros::NodeHandle nh;
-  ros::ServiceClient handle = nh.serviceClient<test_roscpp::TestStringString>("service_adv", true, header);
+  miniros::NodeHandle nh;
+  miniros::ServiceClient handle = nh.serviceClient<test_roscpp::TestStringString>("service_adv", true, header);
 
-  ros::Time start = ros::Time::now();
+  miniros::Time start = miniros::Time::now();
 
   for (int i = 0; i < 10000; ++i)
   {
     ASSERT_TRUE(handle.call(req, res));
   }
 
-  ros::Time end = ros::Time::now();
-  ros::Duration d = end - start;
+  miniros::Time end = miniros::Time::now();
+  miniros::Duration d = end - start;
   printf("10000 calls took %f secs\n", d.toSec());
 
   ASSERT_STREQ(res.str.c_str(), "CASE_flip");
@@ -172,8 +172,8 @@ TEST(SrvCall, callSrvLongRunning)
 
   req.str = std::string("case_FLIP");
 
-  ASSERT_TRUE(ros::service::waitForService("service_adv_long"));
-  ASSERT_TRUE(ros::service::call("service_adv_long", req, res));
+  ASSERT_TRUE(miniros::service::waitForService("service_adv_long"));
+  ASSERT_TRUE(miniros::service::call("service_adv_long", req, res));
 
   ASSERT_STREQ(res.str.c_str(), "CASE_flip");
 }
@@ -185,8 +185,8 @@ TEST(SrvCall, callSrvWhichUnadvertisesInCallback)
 
   req.str = std::string("case_FLIP");
 
-  ASSERT_TRUE(ros::service::waitForService("service_adv_unadv_in_callback"));
-  ASSERT_FALSE(ros::service::call("service_adv_unadv_in_callback", req, res));
+  ASSERT_TRUE(miniros::service::waitForService("service_adv_unadv_in_callback"));
+  ASSERT_FALSE(miniros::service::call("service_adv_unadv_in_callback", req, res));
 }
 
 TEST(SrvCall, handleValid)
@@ -196,13 +196,13 @@ TEST(SrvCall, handleValid)
 
   req.str = std::string("case_FLIP");
 
-  ASSERT_TRUE(ros::service::waitForService("service_adv"));
+  ASSERT_TRUE(miniros::service::waitForService("service_adv"));
 
   std::map<std::string, std::string> header;
   header["test1"] = "testing 1";
   header["test2"] = "testing 2";
-  ros::NodeHandle nh;
-  ros::ServiceClient handle = nh.serviceClient<test_roscpp::TestStringString>("service_adv", true, header);
+  miniros::NodeHandle nh;
+  miniros::ServiceClient handle = nh.serviceClient<test_roscpp::TestStringString>("service_adv", true, header);
   ASSERT_TRUE(handle.call(req, res));
   ASSERT_TRUE(handle.isValid());
   handle.shutdown();
@@ -213,12 +213,12 @@ TEST(SrvCall, handleValid)
 
 TEST(SrvCall, waitForServiceTimeout)
 {
-  ros::NodeHandle nh;
-  ASSERT_FALSE(ros::service::waitForService("iojergoiwjoiewg", 1000));
-  ASSERT_FALSE(ros::service::waitForService("iojergoiwjoiewg", ros::Duration(1)));
+  miniros::NodeHandle nh;
+  ASSERT_FALSE(miniros::service::waitForService("iojergoiwjoiewg", 1000));
+  ASSERT_FALSE(miniros::service::waitForService("iojergoiwjoiewg", miniros::Duration(1)));
 
-  ros::ServiceClient handle = nh.serviceClient<test_roscpp::TestStringString>("migowiowejowieuhwejg", false);
-  ASSERT_FALSE(handle.waitForExistence(ros::Duration(1)));
+  miniros::ServiceClient handle = nh.serviceClient<test_roscpp::TestStringString>("migowiowejowieuhwejg", false);
+  ASSERT_FALSE(handle.waitForExistence(miniros::Duration(1)));
 }
 
 int
@@ -226,8 +226,8 @@ main(int argc, char** argv)
 {
   testing::InitGoogleTest(&argc, argv);
 
-  ros::init(argc, argv, "service_call");
-  ros::NodeHandle nh;
+  miniros::init(argc, argv, "service_call");
+  miniros::NodeHandle nh;
 
   int ret = RUN_ALL_TESTS();
 

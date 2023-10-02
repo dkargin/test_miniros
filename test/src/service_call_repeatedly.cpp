@@ -35,23 +35,23 @@
 
 #include <time.h>
 
-#include "ros/ros.h"
+#include <miniros/ros.h>
 #include "ros/service.h"
 #include <test_roscpp/TestStringString.h>
 
 int
 main(int argc, char** argv)
 {
-  ros::init(argc, argv, "service_call_repeatedly");
-  ros::NodeHandle nh;
+  miniros::init(argc, argv, "service_call_repeatedly");
+  miniros::NodeHandle nh;
 
   test_roscpp::TestStringString::Request req;
   test_roscpp::TestStringString::Response res;
 
-  while(ros::ok())
+  while(miniros::ok())
   {
-    ros::service::call("service_adv", req, res);
-    ros::Duration(0.01).sleep();
+    miniros::service::call("service_adv", req, res);
+    miniros::Duration(0.01).sleep();
   }
 
   

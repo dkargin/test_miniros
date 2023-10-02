@@ -36,18 +36,18 @@
 #include <cstdlib>
 #include <cstdio>
 
-using namespace ros::serialization;
+using namespace miniros::serialization;
 
-ros::WallTime t;
+miniros::WallTime t;
 
 inline void tic()
 {
-  t = ros::WallTime::now();
+  t = miniros::WallTime::now();
 }
 
 inline double toc()
 {
-  return (ros::WallTime::now() - t).toSec();
+  return (miniros::WallTime::now() - t).toSec();
 }
 
 int main(int, char **)
@@ -61,7 +61,7 @@ int main(int, char **)
   pc.chan[0].vals.resize(NUM_PTS);
   pc.chan[1].vals.resize(NUM_PTS);
 
-  ros::SerializedMessage m;
+  miniros::SerializedMessage m;
   m.num_bytes = serializationLength(pc);
   m.buf.reset(new uint8_t[m.num_bytes]);
 

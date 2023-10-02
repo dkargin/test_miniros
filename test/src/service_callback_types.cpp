@@ -35,7 +35,7 @@
  */
 
 #include <gtest/gtest.h>
-#include "ros/ros.h"
+#include <miniros/ros.h>
 #include "test_roscpp/TestStringString.h"
 
 #include <vector>
@@ -46,12 +46,12 @@ bool add(test_roscpp::TestStringString::Request &,
   return true;
 }
 
-bool add2(ros::ServiceEvent<test_roscpp::TestStringString::Request, test_roscpp::TestStringString::Response>&)
+bool add2(miniros::ServiceEvent<test_roscpp::TestStringString::Request, test_roscpp::TestStringString::Response>&)
 {
   return true;
 }
 
-bool add3(ros::ServiceEvent<test_roscpp::TestStringString::Request, test_roscpp::TestStringString::Response>&, const std::string&)
+bool add3(miniros::ServiceEvent<test_roscpp::TestStringString::Request, test_roscpp::TestStringString::Response>&, const std::string&)
 {
   return true;
 }
@@ -64,12 +64,12 @@ struct A
     return true;
   }
 
-  bool add2(ros::ServiceEvent<test_roscpp::TestStringString::Request, test_roscpp::TestStringString::Response>&)
+  bool add2(miniros::ServiceEvent<test_roscpp::TestStringString::Request, test_roscpp::TestStringString::Response>&)
   {
     return true;
   }
 
-  bool add3(ros::ServiceEvent<test_roscpp::TestStringString::Request, test_roscpp::TestStringString::Response>&, const std::string&)
+  bool add3(miniros::ServiceEvent<test_roscpp::TestStringString::Request, test_roscpp::TestStringString::Response>&, const std::string&)
   {
     return true;
   }
@@ -77,25 +77,25 @@ struct A
 
 TEST(ServiceCallbackTypes, compile)
 {
-  ros::NodeHandle n;
+  miniros::NodeHandle n;
 
-  std::vector<ros::ServiceServer> srvs;
+  std::vector<miniros::ServiceServer> srvs;
   srvs.push_back(n.advertiseService("add_two_ints", add));
   srvs.push_back(n.advertiseService("add_two_ints2", add2));
-  srvs.push_back(n.advertiseService<ros::ServiceEvent<test_roscpp::TestStringString::Request, test_roscpp::TestStringString::Response> >("add_two_ints3", boost::bind(add3, _1, std::string("blah"))));
+  srvs.push_back(n.advertiseService<miniros::ServiceEvent<test_roscpp::TestStringString::Request, test_roscpp::TestStringString::Response> >("add_two_ints3", boost::bind(add3, _1, std::string("blah"))));
 
   A a;
   srvs.push_back(n.advertiseService("add_two_ints10", &A::add, &a));
   srvs.push_back(n.advertiseService("add_two_ints11", &A::add2, &a));
-  srvs.push_back(n.advertiseService<ros::ServiceEvent<test_roscpp::TestStringString::Request, test_roscpp::TestStringString::Response> >("add_two_ints12", boost::bind(&A::add3, &a, _1, std::string("blah"))));
+  srvs.push_back(n.advertiseService<miniros::ServiceEvent<test_roscpp::TestStringString::Request, test_roscpp::TestStringString::Response> >("add_two_ints12", boost::bind(&A::add3, &a, _1, std::string("blah"))));
 }
 
 int main(int argc, char **argv)
 {
   testing::InitGoogleTest(&argc, argv);
 
-  ros::init( argc, argv, "subscription_callback_types" );
-  ros::NodeHandle nh;
+  miniros::init( argc, argv, "subscription_callback_types" );
+  miniros::NodeHandle nh;
 
   return RUN_ALL_TESTS();
 }

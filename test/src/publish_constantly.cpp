@@ -31,20 +31,20 @@
 
 #include <time.h>
 
-#include "ros/ros.h"
+#include <miniros/ros.h>
 #include "test_roscpp/TestArray.h"
 
 int main(int argc, char **argv)
 {
-  ros::init(argc, argv, "publish_constantly");
-  ros::NodeHandle nh;
-  ros::Publisher pub = nh.advertise<test_roscpp::TestArray>("roscpp/pubsub_test", 100);
+  miniros::init(argc, argv, "publish_constantly");
+  miniros::NodeHandle nh;
+  miniros::Publisher pub = nh.advertise<test_roscpp::TestArray>("roscpp/pubsub_test", 100);
 
   test_roscpp::TestArray msg;
   msg.float_arr.resize(100);
 
-  ros::WallDuration d(0.01);
-  while(ros::ok())
+  miniros::WallDuration d(0.01);
+  while(miniros::ok())
   {
     d.sleep();
     pub.publish(msg);

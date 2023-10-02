@@ -39,7 +39,7 @@
 
 #include <stdlib.h>
 
-#include "ros/ros.h"
+#include <miniros/ros.h>
 
 #include "test_roscpp/TestEmpty.h"
 
@@ -67,13 +67,13 @@ struct NonConstHelper
 TEST(NonConstSubscriptions, oneNonConstSubscriber)
 {
   NonConstHelper h;
-  ros::NodeHandle nh;
-  ros::Subscriber sub = nh.subscribe("test", 0, &NonConstHelper::callback, &h);
-  ros::Publisher pub = nh.advertise<test_roscpp::TestEmpty>("test", 0);
+  miniros::NodeHandle nh;
+  miniros::Subscriber sub = nh.subscribe("test", 0, &NonConstHelper::callback, &h);
+  miniros::Publisher pub = nh.advertise<test_roscpp::TestEmpty>("test", 0);
 
   test_roscpp::TestEmptyPtr msg(boost::make_shared<test_roscpp::TestEmpty>());
   pub.publish(msg);
-  ros::spinOnce();
+  miniros::spinOnce();
 
   ASSERT_TRUE(h.message_);
   EXPECT_EQ(h.message_, msg);
@@ -83,14 +83,14 @@ TEST(NonConstSubscriptions, oneConstOneNonConst)
 {
   NonConstHelper h;
   ConstHelper h2;
-  ros::NodeHandle nh;
-  ros::Subscriber sub = nh.subscribe("test", 0, &NonConstHelper::callback, &h);
-  ros::Subscriber sub2 = nh.subscribe("test", 0, &ConstHelper::callback, &h2);
-  ros::Publisher pub = nh.advertise<test_roscpp::TestEmpty>("test", 0);
+  miniros::NodeHandle nh;
+  miniros::Subscriber sub = nh.subscribe("test", 0, &NonConstHelper::callback, &h);
+  miniros::Subscriber sub2 = nh.subscribe("test", 0, &ConstHelper::callback, &h2);
+  miniros::Publisher pub = nh.advertise<test_roscpp::TestEmpty>("test", 0);
 
   test_roscpp::TestEmptyPtr msg(boost::make_shared<test_roscpp::TestEmpty>());
   pub.publish(msg);
-  ros::spinOnce();
+  miniros::spinOnce();
 
   ASSERT_TRUE(h.message_);
   EXPECT_NE(h.message_, msg);
@@ -101,14 +101,14 @@ TEST(NonConstSubscriptions, twoNonConst)
 {
   NonConstHelper h;
   NonConstHelper h2;
-  ros::NodeHandle nh;
-  ros::Subscriber sub = nh.subscribe("test", 0, &NonConstHelper::callback, &h);
-  ros::Subscriber sub2 = nh.subscribe("test", 0, &NonConstHelper::callback, &h2);
-  ros::Publisher pub = nh.advertise<test_roscpp::TestEmpty>("test", 0);
+  miniros::NodeHandle nh;
+  miniros::Subscriber sub = nh.subscribe("test", 0, &NonConstHelper::callback, &h);
+  miniros::Subscriber sub2 = nh.subscribe("test", 0, &NonConstHelper::callback, &h2);
+  miniros::Publisher pub = nh.advertise<test_roscpp::TestEmpty>("test", 0);
 
   test_roscpp::TestEmptyPtr msg(boost::make_shared<test_roscpp::TestEmpty>());
   pub.publish(msg);
-  ros::spinOnce();
+  miniros::spinOnce();
 
   ASSERT_TRUE(h.message_);
   EXPECT_NE(h.message_, msg);
@@ -118,14 +118,14 @@ TEST(NonConstSubscriptions, twoConst)
 {
   ConstHelper h;
   ConstHelper h2;
-  ros::NodeHandle nh;
-  ros::Subscriber sub = nh.subscribe("test", 0, &ConstHelper::callback, &h);
-  ros::Subscriber sub2 = nh.subscribe("test", 0, &ConstHelper::callback, &h2);
-  ros::Publisher pub = nh.advertise<test_roscpp::TestEmpty>("test", 0);
+  miniros::NodeHandle nh;
+  miniros::Subscriber sub = nh.subscribe("test", 0, &ConstHelper::callback, &h);
+  miniros::Subscriber sub2 = nh.subscribe("test", 0, &ConstHelper::callback, &h2);
+  miniros::Publisher pub = nh.advertise<test_roscpp::TestEmpty>("test", 0);
 
   test_roscpp::TestEmptyPtr msg(boost::make_shared<test_roscpp::TestEmpty>());
   pub.publish(msg);
-  ros::spinOnce();
+  miniros::spinOnce();
 
   ASSERT_TRUE(h.message_);
   EXPECT_EQ(h.message_, msg);
@@ -135,9 +135,9 @@ TEST(NonConstSubscriptions, twoConst)
 int main(int argc, char** argv)
 {
   testing::InitGoogleTest(&argc, argv);
-  ros::init(argc, argv, "intraprocess_subscriptions");
+  miniros::init(argc, argv, "intraprocess_subscriptions");
 
-  ros::NodeHandle nh;
+  miniros::NodeHandle nh;
 
   return RUN_ALL_TESTS();
 }

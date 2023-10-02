@@ -39,17 +39,17 @@
 
 #include <stdlib.h>
 
-#include "ros/ros.h"
+#include <miniros/ros.h>
 #include <test_roscpp/TestArray.h>
 
 int g_msg_count;
-ros::Duration g_dt;
+miniros::Duration g_dt;
 uint32_t g_options = 0;
 bool g_success = false;
 bool g_failure = false;
 int32_t g_msg_i = -1;
 
-void subscriberCallback(const ros::SingleSubscriberPublisher&, const ros::Publisher& pub)
+void subscriberCallback(const miniros::SingleSubscriberPublisher&, const miniros::Publisher& pub)
 {
   test_roscpp::TestArray outmsg;
   for(int i=0;i<g_msg_count;i++)
@@ -81,8 +81,8 @@ void messageCallback(const test_roscpp::TestArrayConstPtr& msg)
 
 TEST(SelfSubscribe, advSub)
 {
-  ros::NodeHandle nh;
-  ros::Duration d;
+  miniros::NodeHandle nh;
+  miniros::Duration d;
   d.fromNSec(10000000);
 
   g_success = false;
@@ -90,16 +90,16 @@ TEST(SelfSubscribe, advSub)
   g_msg_i = -1;
 
   {
-    ros::Publisher pub;
+    miniros::Publisher pub;
     pub = nh.advertise<test_roscpp::TestArray>("roscpp/pubsub_test", g_msg_count, boost::bind(subscriberCallback, _1, boost::ref(pub)));
     ASSERT_TRUE(pub);
-    ros::Subscriber sub = nh.subscribe("roscpp/pubsub_test", g_msg_count, messageCallback);
+    miniros::Subscriber sub = nh.subscribe("roscpp/pubsub_test", g_msg_count, messageCallback);
     ASSERT_TRUE(sub);
-    ros::Time t1(ros::Time::now()+g_dt);
-    while(ros::Time::now() < t1 && !g_success && !g_failure)
+    miniros::Time t1(miniros::Time::now()+g_dt);
+    while(miniros::Time::now() < t1 && !g_success && !g_failure)
     {
       d.sleep();
-      ros::spinOnce();
+      miniros::spinOnce();
     }
   }
 
@@ -112,17 +112,17 @@ TEST(SelfSubscribe, advSub)
   g_msg_i = -1;
 
   {
-    ros::Subscriber sub = nh.subscribe("roscpp/pubsub_test", g_msg_count, messageCallback);
+    miniros::Subscriber sub = nh.subscribe("roscpp/pubsub_test", g_msg_count, messageCallback);
     ASSERT_TRUE(sub);
-    ros::Publisher pub;
+    miniros::Publisher pub;
     pub = nh.advertise<test_roscpp::TestArray>("roscpp/pubsub_test", g_msg_count, boost::bind(subscriberCallback, _1, boost::ref(pub)));
     ASSERT_TRUE(pub);
 
-    ros::Time t1(ros::Time::now()+g_dt);
-    while(ros::Time::now() < t1 && !g_success && !g_failure)
+    miniros::Time t1(miniros::Time::now()+g_dt);
+    while(miniros::Time::now() < t1 && !g_success && !g_failure)
     {
       d.sleep();
-      ros::spinOnce();
+      miniros::spinOnce();
     }
   }
 
@@ -137,7 +137,7 @@ int
 main(int argc, char** argv)
 {
   testing::InitGoogleTest(&argc, argv);
-  ros::init(argc, argv, "subscribe_self");
+  miniros::init(argc, argv, "subscribe_self");
 
   if(argc != 3)
   {
@@ -148,7 +148,7 @@ main(int argc, char** argv)
   g_msg_count = atoi(argv[1]);
   g_dt.fromSec(atof(argv[2]));
 
-  ros::NodeHandle nh;
+  miniros::NodeHandle nh;
 
   return RUN_ALL_TESTS();
 }

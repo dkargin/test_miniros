@@ -34,11 +34,11 @@
  */
 
 #include <gtest/gtest.h>
-#include "ros/common.h"
+#include "miniros/config.h"
 
 TEST(version, minimum)
 {
-  ASSERT_TRUE(ROS_VERSION_GE(0, 5, 0, 0, 4, 0));
+  ASSERT_TRUE(MINIROS_VERSION_GE(0, 5, 0, 0, 4, 0));
   ASSERT_TRUE(ROS_VERSION_GE(0, 5, 0, 0, 4, 10));
   ASSERT_FALSE(ROS_VERSION_GE(0, 5, 0, 999, 0, 0));
   ASSERT_FALSE(ROS_VERSION_GE(0, 5, 0, 0, 999, 0));

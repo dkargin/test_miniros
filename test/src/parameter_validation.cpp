@@ -29,7 +29,7 @@
 
 #include <gtest/gtest.h>
 
-#include <ros/ros.h>
+#include <miniros/ros.h>
 
 #include <test_roscpp/TestEmpty.h>
 
@@ -51,8 +51,8 @@ void callback(const test_roscpp::TestEmptyConstPtr&)
 
 TEST(ParameterValidation, subscribeEmptyMD5Sum)
 {
-  ros::NodeHandle nh;
-  ros::SubscribeOptions ops;
+  miniros::NodeHandle nh;
+  miniros::SubscribeOptions ops;
   ops.init<test_roscpp::TestEmpty>("blah", 0, callback);
   ops.md5sum.clear();
   ASSERT_THROWS(nh.subscribe(ops));
@@ -60,8 +60,8 @@ TEST(ParameterValidation, subscribeEmptyMD5Sum)
 
 TEST(ParameterValidation, subscribeEmptyDataType)
 {
-  ros::NodeHandle nh;
-  ros::SubscribeOptions ops;
+  miniros::NodeHandle nh;
+  miniros::SubscribeOptions ops;
   ops.init<test_roscpp::TestEmpty>("blah", 0, callback);
   ops.datatype.clear();
   ASSERT_THROWS(nh.subscribe(ops));
@@ -69,45 +69,45 @@ TEST(ParameterValidation, subscribeEmptyDataType)
 
 TEST(ParameterValidation, subscribeNoCallback)
 {
-  ros::NodeHandle nh;
-  ros::SubscribeOptions ops("blah", 0, "blah", "blah");
+  miniros::NodeHandle nh;
+  miniros::SubscribeOptions ops("blah", 0, "blah", "blah");
   ASSERT_THROWS(nh.subscribe(ops));
 }
 
 TEST(ParameterValidation, advertiseEmptyMD5Sum)
 {
-  ros::NodeHandle nh;
-  ros::AdvertiseOptions ops("blah", 0, "", "blah", "blah");
+  miniros::NodeHandle nh;
+  miniros::AdvertiseOptions ops("blah", 0, "", "blah", "blah");
   ASSERT_THROWS(nh.advertise(ops));
 }
 
 TEST(ParameterValidation, advertiseEmptyDataType)
 {
-  ros::NodeHandle nh;
-  ros::AdvertiseOptions ops("blah", 0, "blah", "", "blah");
+  miniros::NodeHandle nh;
+  miniros::AdvertiseOptions ops("blah", 0, "blah", "", "blah");
   ASSERT_THROWS(nh.advertise(ops));
 }
 
 TEST(ParameterValidation, advertiseStarMD5Sum)
 {
-  ros::NodeHandle nh;
-  ros::AdvertiseOptions ops("blah", 0, "*", "blah", "blah");
+  miniros::NodeHandle nh;
+  miniros::AdvertiseOptions ops("blah", 0, "*", "blah", "blah");
   ASSERT_THROWS(nh.advertise(ops));
 }
 
 TEST(ParameterValidation, advertiseStarDataType)
 {
-  ros::NodeHandle nh;
-  ros::AdvertiseOptions ops("blah", 0, "blah", "*", "blah");
+  miniros::NodeHandle nh;
+  miniros::AdvertiseOptions ops("blah", 0, "blah", "*", "blah");
   ASSERT_THROWS(nh.advertise(ops));
 }
 
 int main(int argc, char** argv)
 {
   testing::InitGoogleTest(&argc, argv);
-  ros::init(argc, argv, "parameter_validation");
+  miniros::init(argc, argv, "parameter_validation");
 
-  ros::NodeHandle nh;
+  miniros::NodeHandle nh;
 
   return RUN_ALL_TESTS();
 }

@@ -42,10 +42,10 @@
 #include <time.h>
 #include <stdlib.h>
 
-#include "ros/ros.h"
+#include <miniros/ros.h>
 #include <ros/param.h>
 
-using namespace ros;
+using namespace miniros;
 
 TEST(Params, allParamTypes)
 {
@@ -215,7 +215,7 @@ TEST(Params, searchParam)
   bool cont = true;
   while (!cont)
   {
-  	ros::WallDuration(0.1).sleep();
+  	miniros::WallDuration(0.1).sleep();
   }
 
   ASSERT_FALSE(param::search(ns, "s_j", result));
@@ -261,16 +261,16 @@ TEST(Params, searchParamNodeHandleWithRemapping)
 TEST(Params, getMissingXmlRpcValueParameterCachedTwice)
 {
   XmlRpc::XmlRpcValue v;
-  ASSERT_FALSE(ros::param::getCached("invalid_xmlrpcvalue_param", v));
-  ASSERT_FALSE(ros::param::getCached("invalid_xmlrpcvalue_param", v));
+  ASSERT_FALSE(miniros::param::getCached("invalid_xmlrpcvalue_param", v));
+  ASSERT_FALSE(miniros::param::getCached("invalid_xmlrpcvalue_param", v));
 }
 
 // See ROS ticket #2353
 TEST(Params, doublePrecision)
 {
-  ros::param::set("bar", 0.123456789123456789);
+  miniros::param::set("bar", 0.123456789123456789);
   double d;
-  ASSERT_TRUE(ros::param::get("bar", d));
+  ASSERT_TRUE(miniros::param::get("bar", d));
   EXPECT_DOUBLE_EQ(d, 0.12345678912345678);
 }
 
@@ -289,22 +289,22 @@ TEST(Params, vectorStringParam)
   vec_s.push_back("bar");
   vec_s.push_back("baz");
 
-  ros::param::set(param_name, vec_s);
+  miniros::param::set(param_name, vec_s);
 
-  ASSERT_FALSE(ros::param::get(param_name, vec_d));
-  ASSERT_FALSE(ros::param::get(param_name, vec_f));
-  ASSERT_FALSE(ros::param::get(param_name, vec_i));
-  ASSERT_FALSE(ros::param::get(param_name, vec_b));
+  ASSERT_FALSE(miniros::param::get(param_name, vec_d));
+  ASSERT_FALSE(miniros::param::get(param_name, vec_f));
+  ASSERT_FALSE(miniros::param::get(param_name, vec_i));
+  ASSERT_FALSE(miniros::param::get(param_name, vec_b));
 
-  ASSERT_TRUE(ros::param::get(param_name, vec_s2));
+  ASSERT_TRUE(miniros::param::get(param_name, vec_s2));
 
   ASSERT_EQ(vec_s.size(), vec_s2.size());
   ASSERT_TRUE(std::equal(vec_s.begin(), vec_s.end(), vec_s2.begin()));
 
   // Test empty vector
   vec_s.clear();
-  ros::param::set(param_name, vec_s);
-  ASSERT_TRUE(ros::param::get(param_name, vec_s2));
+  miniros::param::set(param_name, vec_s);
+  ASSERT_TRUE(miniros::param::get(param_name, vec_s2));
   ASSERT_EQ(vec_s.size(), vec_s2.size());
 }
 
@@ -318,14 +318,14 @@ TEST(Params, vectorDoubleParam)
   vec_d.push_back(3.01);
   vec_d.push_back(7.01);
 
-  ros::param::set(param_name, vec_d);
+  miniros::param::set(param_name, vec_d);
 
-  ASSERT_FALSE(ros::param::get(param_name, vec_s));
-  ASSERT_TRUE(ros::param::get(param_name, vec_i));
-  ASSERT_TRUE(ros::param::get(param_name, vec_b));
-  ASSERT_TRUE(ros::param::get(param_name, vec_f));
+  ASSERT_FALSE(miniros::param::get(param_name, vec_s));
+  ASSERT_TRUE(miniros::param::get(param_name, vec_i));
+  ASSERT_TRUE(miniros::param::get(param_name, vec_b));
+  ASSERT_TRUE(miniros::param::get(param_name, vec_f));
 
-  ASSERT_TRUE(ros::param::get(param_name, vec_d2));
+  ASSERT_TRUE(miniros::param::get(param_name, vec_d2));
 
   ASSERT_EQ(vec_d.size(), vec_d2.size());
   ASSERT_TRUE(std::equal(vec_d.begin(), vec_d.end(), vec_d2.begin()));
@@ -341,17 +341,17 @@ TEST(Params, vectorFloatParam)
   vec_f.push_back(3);
   vec_f.push_back(3.01);
 
-  ros::param::set(param_name, vec_f);
+  miniros::param::set(param_name, vec_f);
 
-  ASSERT_FALSE(ros::param::get(param_name, vec_s));
-  ASSERT_TRUE(ros::param::get(param_name, vec_i));
-  ASSERT_TRUE(ros::param::get(param_name, vec_b));
-  ASSERT_TRUE(ros::param::get(param_name, vec_d));
+  ASSERT_FALSE(miniros::param::get(param_name, vec_s));
+  ASSERT_TRUE(miniros::param::get(param_name, vec_i));
+  ASSERT_TRUE(miniros::param::get(param_name, vec_b));
+  ASSERT_TRUE(miniros::param::get(param_name, vec_d));
 
   ASSERT_EQ(vec_b[0],true);
   ASSERT_EQ(vec_b[1],false);
 
-  ASSERT_TRUE(ros::param::get(param_name, vec_f2));
+  ASSERT_TRUE(miniros::param::get(param_name, vec_f2));
 
   ASSERT_EQ(vec_f.size(), vec_f2.size());
   ASSERT_TRUE(std::equal(vec_f.begin(), vec_f.end(), vec_f2.begin()));
@@ -367,17 +367,17 @@ TEST(Params, vectorIntParam)
   vec_i.push_back(1337);
   vec_i.push_back(2);
 
-  ros::param::set(param_name, vec_i);
+  miniros::param::set(param_name, vec_i);
 
-  ASSERT_FALSE(ros::param::get(param_name, vec_s));
-  ASSERT_TRUE(ros::param::get(param_name, vec_d));
-  ASSERT_TRUE(ros::param::get(param_name, vec_f));
-  ASSERT_TRUE(ros::param::get(param_name, vec_b));
+  ASSERT_FALSE(miniros::param::get(param_name, vec_s));
+  ASSERT_TRUE(miniros::param::get(param_name, vec_d));
+  ASSERT_TRUE(miniros::param::get(param_name, vec_f));
+  ASSERT_TRUE(miniros::param::get(param_name, vec_b));
 
   ASSERT_EQ(vec_b[0],true);
   ASSERT_EQ(vec_b[1],false);
 
-  ASSERT_TRUE(ros::param::get(param_name, vec_i2));
+  ASSERT_TRUE(miniros::param::get(param_name, vec_i2));
 
   ASSERT_EQ(vec_i.size(), vec_i2.size());
   ASSERT_TRUE(std::equal(vec_i.begin(), vec_i.end(), vec_i2.begin()));
@@ -393,17 +393,17 @@ TEST(Params, vectorBoolParam)
   vec_b.push_back(true);
   vec_b.push_back(true);
 
-  ros::param::set(param_name, vec_b);
+  miniros::param::set(param_name, vec_b);
 
-  ASSERT_FALSE(ros::param::get(param_name, vec_s));
-  ASSERT_TRUE(ros::param::get(param_name, vec_d));
-  ASSERT_TRUE(ros::param::get(param_name, vec_f));
-  ASSERT_TRUE(ros::param::get(param_name, vec_i));
+  ASSERT_FALSE(miniros::param::get(param_name, vec_s));
+  ASSERT_TRUE(miniros::param::get(param_name, vec_d));
+  ASSERT_TRUE(miniros::param::get(param_name, vec_f));
+  ASSERT_TRUE(miniros::param::get(param_name, vec_i));
 
   ASSERT_EQ(vec_i[0],1);
   ASSERT_EQ(vec_i[1],0);
 
-  ASSERT_TRUE(ros::param::get(param_name, vec_b2));
+  ASSERT_TRUE(miniros::param::get(param_name, vec_b2));
 
   ASSERT_EQ(vec_b.size(), vec_b2.size());
   ASSERT_TRUE(std::equal(vec_b.begin(), vec_b.end(), vec_b2.begin()));
@@ -424,14 +424,14 @@ TEST(Params, mapStringParam)
   map_s["b"] = "blueberry";
   map_s["c"] = "carrot";
 
-  ros::param::set(param_name, map_s);
+  miniros::param::set(param_name, map_s);
 
-  ASSERT_FALSE(ros::param::get(param_name, map_d));
-  ASSERT_FALSE(ros::param::get(param_name, map_f));
-  ASSERT_FALSE(ros::param::get(param_name, map_i));
-  ASSERT_FALSE(ros::param::get(param_name, map_b));
+  ASSERT_FALSE(miniros::param::get(param_name, map_d));
+  ASSERT_FALSE(miniros::param::get(param_name, map_f));
+  ASSERT_FALSE(miniros::param::get(param_name, map_i));
+  ASSERT_FALSE(miniros::param::get(param_name, map_b));
 
-  ASSERT_TRUE(ros::param::get(param_name, map_s2));
+  ASSERT_TRUE(miniros::param::get(param_name, map_s2));
 
   ASSERT_EQ(map_s.size(), map_s2.size());
   ASSERT_TRUE(std::equal(map_s.begin(), map_s.end(), map_s2.begin()));
@@ -446,14 +446,14 @@ TEST(Params, mapDoubleParam)
   map_d["b"] = -0.123456789;
   map_d["c"] = 123456789;
 
-  ros::param::set(param_name, map_d);
+  miniros::param::set(param_name, map_d);
 
-  ASSERT_FALSE(ros::param::get(param_name, map_s));
-  ASSERT_TRUE(ros::param::get(param_name, map_f));
-  ASSERT_TRUE(ros::param::get(param_name, map_i));
-  ASSERT_TRUE(ros::param::get(param_name, map_b));
+  ASSERT_FALSE(miniros::param::get(param_name, map_s));
+  ASSERT_TRUE(miniros::param::get(param_name, map_f));
+  ASSERT_TRUE(miniros::param::get(param_name, map_i));
+  ASSERT_TRUE(miniros::param::get(param_name, map_b));
 
-  ASSERT_TRUE(ros::param::get(param_name, map_d2));
+  ASSERT_TRUE(miniros::param::get(param_name, map_d2));
 
   ASSERT_EQ(map_d.size(), map_d2.size());
   ASSERT_TRUE(std::equal(map_d.begin(), map_d.end(), map_d2.begin()));
@@ -468,14 +468,14 @@ TEST(Params, mapFloatParam)
   map_f["b"] = -0.123456789;
   map_f["c"] = 123456789;
 
-  ros::param::set(param_name, map_f);
+  miniros::param::set(param_name, map_f);
 
-  ASSERT_FALSE(ros::param::get(param_name, map_s));
-  ASSERT_TRUE(ros::param::get(param_name, map_d));
-  ASSERT_TRUE(ros::param::get(param_name, map_i));
-  ASSERT_TRUE(ros::param::get(param_name, map_b));
+  ASSERT_FALSE(miniros::param::get(param_name, map_s));
+  ASSERT_TRUE(miniros::param::get(param_name, map_d));
+  ASSERT_TRUE(miniros::param::get(param_name, map_i));
+  ASSERT_TRUE(miniros::param::get(param_name, map_b));
 
-  ASSERT_TRUE(ros::param::get(param_name, map_f2));
+  ASSERT_TRUE(miniros::param::get(param_name, map_f2));
 
   ASSERT_EQ(map_f.size(), map_f2.size());
   ASSERT_TRUE(std::equal(map_f.begin(), map_f.end(), map_f2.begin()));
@@ -490,14 +490,14 @@ TEST(Params, mapIntParam)
   map_i["b"] = -1;
   map_i["c"] = 1337;
 
-  ros::param::set(param_name, map_i);
+  miniros::param::set(param_name, map_i);
 
-  ASSERT_FALSE(ros::param::get(param_name, map_s));
-  ASSERT_TRUE(ros::param::get(param_name, map_d));
-  ASSERT_TRUE(ros::param::get(param_name, map_f));
-  ASSERT_TRUE(ros::param::get(param_name, map_b));
+  ASSERT_FALSE(miniros::param::get(param_name, map_s));
+  ASSERT_TRUE(miniros::param::get(param_name, map_d));
+  ASSERT_TRUE(miniros::param::get(param_name, map_f));
+  ASSERT_TRUE(miniros::param::get(param_name, map_b));
 
-  ASSERT_TRUE(ros::param::get(param_name, map_i2));
+  ASSERT_TRUE(miniros::param::get(param_name, map_i2));
 
   ASSERT_EQ(map_i.size(), map_i2.size());
   ASSERT_TRUE(std::equal(map_i.begin(), map_i.end(), map_i2.begin()));
@@ -512,17 +512,17 @@ TEST(Params, mapBoolParam)
   map_b["b"] = false;
   map_b["c"] = true;
 
-  ros::param::set(param_name, map_b);
+  miniros::param::set(param_name, map_b);
 
-  ASSERT_FALSE(ros::param::get(param_name, map_s));
-  ASSERT_TRUE(ros::param::get(param_name, map_d));
-  ASSERT_TRUE(ros::param::get(param_name, map_f));
-  ASSERT_TRUE(ros::param::get(param_name, map_i));
+  ASSERT_FALSE(miniros::param::get(param_name, map_s));
+  ASSERT_TRUE(miniros::param::get(param_name, map_d));
+  ASSERT_TRUE(miniros::param::get(param_name, map_f));
+  ASSERT_TRUE(miniros::param::get(param_name, map_i));
 
   ASSERT_EQ(map_i["a"],1);
   ASSERT_EQ(map_i["b"],0);
 
-  ASSERT_TRUE(ros::param::get(param_name, map_b2));
+  ASSERT_TRUE(miniros::param::get(param_name, map_b2));
 
   ASSERT_EQ(map_b.size(), map_b2.size());
   ASSERT_TRUE(std::equal(map_b.begin(), map_b.end(), map_b2.begin()));
@@ -562,7 +562,7 @@ TEST(Params, paramNodeHandleTemplateFunction)
 
 TEST(Params, getParamNames) {
   std::vector<std::string> test_params;
-  EXPECT_TRUE(ros::param::getParamNames(test_params));
+  EXPECT_TRUE(miniros::param::getParamNames(test_params));
   EXPECT_LT(10u, test_params.size());
 }
 
@@ -581,8 +581,8 @@ int
 main(int argc, char** argv)
 {
   testing::InitGoogleTest(&argc, argv);
-  ros::init(argc, argv, "params");
-  ros::NodeHandle nh;
+  miniros::init(argc, argv, "params");
+  miniros::NodeHandle nh;
 
   return RUN_ALL_TESTS();
 }

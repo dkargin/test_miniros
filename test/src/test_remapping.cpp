@@ -27,7 +27,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <ros/ros.h>
+#include <miniros/ros.h>
 #include <gtest/gtest.h>
 
 static int argc_;
@@ -40,8 +40,8 @@ TEST(RemappingTest, remapping_test)
   std::string expected_base_ns = argv_[1];
   std::string expected_sub_ns  = argv_[2];
 
-  ros::NodeHandle nh;
-  //ros::NodeHandle pnh("~");
+  miniros::NodeHandle nh;
+  //miniros::NodeHandle pnh("~");
 
   bool use_local_remap = false;
   EXPECT_TRUE(nh.getParam("use_local_remap", use_local_remap)) 
@@ -54,24 +54,24 @@ TEST(RemappingTest, remapping_test)
     EXPECT_TRUE(nh.getParam("remap_to",   remap_to))   << "Param [~remap_to] must be defined\n";
 
     // Construct the new node by passing in a dictionary of remaps
-    ros::M_string local_remappings;
+    miniros::M_string local_remappings;
     local_remappings.insert(std::make_pair(remap_from, remap_to));
 
-    ros::NodeHandle base_nh(nh, "base_namespace", local_remappings);
+    miniros::NodeHandle base_nh(nh, "base_namespace", local_remappings);
     EXPECT_TRUE(base_nh.getNamespace() == expected_base_ns) 
       << "Error: \"" << base_nh.getNamespace() << "\" != \""  << expected_base_ns << "\"\n";
 
-    ros::NodeHandle sub_nh(base_nh, "sub_namespace");
+    miniros::NodeHandle sub_nh(base_nh, "sub_namespace");
     EXPECT_TRUE(sub_nh.getNamespace() == expected_sub_ns) 
       << "Error: \"" << sub_nh.getNamespace() << "\" != \""  << expected_sub_ns << "\"\n";
   }
   else
   {
     std::cout << "***********************************************************************\n";
-    ros::NodeHandle base_nh(nh, "base_namespace");
+    miniros::NodeHandle base_nh(nh, "base_namespace");
     EXPECT_EQ(base_nh.getNamespace(), expected_base_ns); 
 
-    ros::NodeHandle sub_nh(base_nh, "sub_namespace");
+    miniros::NodeHandle sub_nh(base_nh, "sub_namespace");
     EXPECT_EQ(sub_nh.getNamespace(), expected_sub_ns); 
   }
 }
@@ -79,7 +79,7 @@ TEST(RemappingTest, remapping_test)
 int main(int argc, char** argv)
 {
   testing::InitGoogleTest(&argc, argv);
-  ros::init(argc, argv, "remapping_tester");
+  miniros::init(argc, argv, "remapping_tester");
   argc_ = argc;
   argv_ = argv;
   return RUN_ALL_TESTS();

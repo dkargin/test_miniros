@@ -27,7 +27,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <ros/ros.h>
+#include <miniros/ros.h>
 #include <gtest/gtest.h>
 
 static int argc_;
@@ -37,8 +37,8 @@ static char** argv_;
 
 TEST(SearchParamTest, search_test_A)
 {
-  ros::NodeHandle nh;
-  ros::param::set("A", "right one!");
+  miniros::NodeHandle nh;
+  miniros::param::set("A", "right one!");
   std::string result;
 
   // Sanity check with getParam
@@ -56,7 +56,7 @@ TEST(SearchParamTest, search_test_A)
 int main(int argc, char** argv)
 {
   testing::InitGoogleTest(&argc, argv);
-  ros::init(argc, argv, "search_param_tester");
+  miniros::init(argc, argv, "search_param_tester");
   argc_ = argc;
   argv_ = argv;
   return RUN_ALL_TESTS();

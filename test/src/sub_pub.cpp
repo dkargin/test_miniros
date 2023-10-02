@@ -40,12 +40,12 @@
 #include <time.h>
 #include <stdlib.h>
 
-#include "ros/ros.h"
+#include <miniros/ros.h>
 #include <ros/callback_queue.h>
 #include <test_roscpp/TestArray.h>
 
 int g_msg_count;
-ros::Duration g_dt;
+miniros::Duration g_dt;
 uint32_t g_options;
 
 class Subscriptions : public testing::Test
@@ -54,7 +54,7 @@ class Subscriptions : public testing::Test
     bool success;
     bool failure;
     int msg_i;
-    ros::Publisher pub_;
+    miniros::Publisher pub_;
 
     void messageCallback(const test_roscpp::TestArrayConstPtr& msg)
     {
@@ -85,7 +85,7 @@ class Subscriptions : public testing::Test
       }
     }
 
-    void subscriberCallback(const ros::SingleSubscriberPublisher&)
+    void subscriberCallback(const miniros::SingleSubscriberPublisher&)
     {
       test_roscpp::TestArray msg;
       msg.counter = 0;
@@ -108,21 +108,21 @@ class Subscriptions : public testing::Test
 
 TEST_F(Subscriptions, subPub)
 {
-  ros::NodeHandle nh;
-  ros::Subscriber sub = nh.subscribe("roscpp/pubsub_test", 0, &Subscriptions::messageCallback, (Subscriptions*)this);
+  miniros::NodeHandle nh;
+  miniros::Subscriber sub = nh.subscribe("roscpp/pubsub_test", 0, &Subscriptions::messageCallback, (Subscriptions*)this);
   ASSERT_TRUE(sub);
   pub_ = nh.advertise<test_roscpp::TestArray>("roscpp/subpub_test", 0, boost::bind(&Subscriptions::subscriberCallback, this, _1));
   ASSERT_TRUE(pub_);
-  ros::Time t1(ros::Time::now()+g_dt);
+  miniros::Time t1(miniros::Time::now()+g_dt);
 
-  while(ros::Time::now() < t1 && !success && !failure)
+  while(miniros::Time::now() < t1 && !success && !failure)
   {
-    ros::getGlobalCallbackQueue()->callAvailable(ros::WallDuration(0.1));
+    miniros::getGlobalCallbackQueue()->callAvailable(miniros::WallDuration(0.1));
   }
 
   if(success) {
     SUCCEED();
-  } else if (ros::Time::now() >= t1) {
+  } else if (miniros::Time::now() >= t1) {
     FAIL() << "timed out after receiving " << msg_i << " of " << g_msg_count << " messages";
   } else {
     FAIL() << "message counter did not match";
@@ -135,7 +135,7 @@ int
 main(int argc, char** argv)
 {
   testing::InitGoogleTest(&argc, argv);
-  ros::init(argc, argv, "sub_pub");
+  miniros::init(argc, argv, "sub_pub");
 
   if(argc != 3)
   {
@@ -145,7 +145,7 @@ main(int argc, char** argv)
   g_msg_count = atoi(argv[1]);
   g_dt.fromSec(atof(argv[2]));
 
-  ros::NodeHandle nh;
+  miniros::NodeHandle nh;
 
   return RUN_ALL_TESTS();
 }

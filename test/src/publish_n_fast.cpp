@@ -38,12 +38,12 @@
 #include <time.h>
 #include <stdlib.h>
 
-#include "ros/ros.h"
+#include <miniros/ros.h>
 #include <test_roscpp/TestArray.h>
 
 #define USAGE "USAGE: publish_n_fast <count> <min_size> <max_size>"
 
-void connectCallback(const ros::SingleSubscriberPublisher &pub, int msg_count, int min_size, int max_size)
+void connectCallback(const miniros::SingleSubscriberPublisher &pub, int msg_count, int min_size, int max_size)
 {
   test_roscpp::TestArray msg;
   for(int i = 0; i < msg_count; i++)
@@ -52,7 +52,7 @@ void connectCallback(const ros::SingleSubscriberPublisher &pub, int msg_count, i
     int j = min_size + (int) ((max_size - min_size) * (rand() / (RAND_MAX + 1.0)));
     msg.float_arr.resize(j);
     ROS_INFO("published message %d (%d bytes)\n",
-             msg.counter, ros::serialization::Serializer<test_roscpp::TestArray>::serializedLength(msg));
+             msg.counter, miniros::serialization::Serializer<test_roscpp::TestArray>::serializedLength(msg));
     pub.publish(msg);
   }
 }
@@ -60,8 +60,8 @@ void connectCallback(const ros::SingleSubscriberPublisher &pub, int msg_count, i
 int
 main(int argc, char** argv)
 {
-  ros::init(argc, argv, "publish_n_fast");
-  ros::NodeHandle n;
+  miniros::init(argc, argv, "publish_n_fast");
+  miniros::NodeHandle n;
 
   if(argc != 4)
   {
@@ -73,8 +73,8 @@ main(int argc, char** argv)
   int min_size = atoi(argv[2]);
   int max_size = atoi(argv[3]);
 
-  ros::Publisher pub_ = n.advertise<test_roscpp::TestArray>("roscpp/pubsub_test", msg_count, boost::bind(&connectCallback, _1, msg_count, min_size, max_size));
-  ros::spin();
+  miniros::Publisher pub_ = n.advertise<test_roscpp::TestArray>("roscpp/pubsub_test", msg_count, boost::bind(&connectCallback, _1, msg_count, min_size, max_size));
+  miniros::spin();
 
   return 0;
 }

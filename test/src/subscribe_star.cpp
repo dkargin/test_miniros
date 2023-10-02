@@ -33,7 +33,7 @@
 
 #include <gtest/gtest.h>
 
-#include <ros/ros.h>
+#include <miniros/ros.h>
 #include <ros/connection_manager.h>
 
 #include "test_roscpp/TestEmpty.h"
@@ -106,33 +106,33 @@ struct AnyHelper
 
 TEST(SubscribeStar, simpleSubFirstIntra)
 {
-  ros::NodeHandle nh;
+  miniros::NodeHandle nh;
   AnyHelper h;
-  ros::Subscriber sub = nh.subscribe("test_star_intra", 0, &AnyHelper::cb, &h);
-  ros::Publisher pub = nh.advertise<test_roscpp::TestEmpty>("test_star_intra", 0);
+  miniros::Subscriber sub = nh.subscribe("test_star_intra", 0, &AnyHelper::cb, &h);
+  miniros::Publisher pub = nh.advertise<test_roscpp::TestEmpty>("test_star_intra", 0);
 
   EXPECT_EQ(pub.getNumSubscribers(), 1U);
   EXPECT_EQ(sub.getNumPublishers(), 1U);
 
   AnyMessagePtr msg(boost::make_shared<AnyMessage>());
   pub.publish(msg);
-  ros::spinOnce();
+  miniros::spinOnce();
   EXPECT_EQ(h.count, 1U);
 }
 
 TEST(SubscribeStar, simplePubFirstIntra)
 {
-  ros::NodeHandle nh;
+  miniros::NodeHandle nh;
   AnyHelper h;
-  ros::Publisher pub = nh.advertise<test_roscpp::TestEmpty>("test_star_intra", 0);
-  ros::Subscriber sub = nh.subscribe("test_star_intra", 0, &AnyHelper::cb, &h);
+  miniros::Publisher pub = nh.advertise<test_roscpp::TestEmpty>("test_star_intra", 0);
+  miniros::Subscriber sub = nh.subscribe("test_star_intra", 0, &AnyHelper::cb, &h);
 
   EXPECT_EQ(pub.getNumSubscribers(), 1U);
   EXPECT_EQ(sub.getNumPublishers(), 1U);
 
   AnyMessagePtr msg(boost::make_shared<AnyMessage>());
   pub.publish(msg);
-  ros::spinOnce();
+  miniros::spinOnce();
   EXPECT_EQ(h.count, 1U);
 }
 
@@ -143,12 +143,12 @@ void emptyCallback(const test_roscpp::TestEmptyConstPtr&)
 
 TEST(SubscribeStar, multipleSubsStarFirstIntra)
 {
-  ros::NodeHandle nh;
+  miniros::NodeHandle nh;
   AnyHelper h;
-  ros::Subscriber sub = nh.subscribe("test_star_intra", 0, &AnyHelper::cb, &h);
-  ros::Subscriber sub2 = nh.subscribe("test_star_intra", 0, emptyCallback);
+  miniros::Subscriber sub = nh.subscribe("test_star_intra", 0, &AnyHelper::cb, &h);
+  miniros::Subscriber sub2 = nh.subscribe("test_star_intra", 0, emptyCallback);
 
-  ros::Publisher pub = nh.advertise<test_roscpp::TestEmpty>("test_star_intra", 0);
+  miniros::Publisher pub = nh.advertise<test_roscpp::TestEmpty>("test_star_intra", 0);
   EXPECT_EQ(pub.getNumSubscribers(), 1U);
   EXPECT_EQ(sub.getNumPublishers(), 1U);
   EXPECT_EQ(sub2.getNumPublishers(), 1U);
@@ -162,12 +162,12 @@ TEST(SubscribeStar, multipleSubsStarFirstIntra)
 
 TEST(SubscribeStar, multipleSubsConcreteFirstIntra)
 {
-  ros::NodeHandle nh;
+  miniros::NodeHandle nh;
   AnyHelper h;
-  ros::Subscriber sub2 = nh.subscribe("test_star_intra", 0, emptyCallback);
-  ros::Subscriber sub = nh.subscribe("test_star_intra", 0, &AnyHelper::cb, &h);
+  miniros::Subscriber sub2 = nh.subscribe("test_star_intra", 0, emptyCallback);
+  miniros::Subscriber sub = nh.subscribe("test_star_intra", 0, &AnyHelper::cb, &h);
 
-  ros::Publisher pub = nh.advertise<test_roscpp::TestEmpty>("test_star_intra", 0);
+  miniros::Publisher pub = nh.advertise<test_roscpp::TestEmpty>("test_star_intra", 0);
   EXPECT_EQ(pub.getNumSubscribers(), 1U);
   EXPECT_EQ(sub.getNumPublishers(), 1U);
   EXPECT_EQ(sub2.getNumPublishers(), 1U);
@@ -181,13 +181,13 @@ TEST(SubscribeStar, multipleSubsConcreteFirstIntra)
 
 TEST(SubscribeStar, multipleShutdownConcreteIntra)
 {
-  ros::NodeHandle nh;
+  miniros::NodeHandle nh;
   AnyHelper h;
-  ros::Subscriber sub = nh.subscribe("test_star_intra", 0, &AnyHelper::cb, &h);
-  ros::Subscriber sub2 = nh.subscribe("test_star_intra", 0, emptyCallback);
+  miniros::Subscriber sub = nh.subscribe("test_star_intra", 0, &AnyHelper::cb, &h);
+  miniros::Subscriber sub2 = nh.subscribe("test_star_intra", 0, emptyCallback);
   sub2.shutdown();
 
-  ros::Publisher pub = nh.advertise<test_roscpp::TestEmpty>("test_star_intra", 0);
+  miniros::Publisher pub = nh.advertise<test_roscpp::TestEmpty>("test_star_intra", 0);
   EXPECT_EQ(pub.getNumSubscribers(), 1U);
   EXPECT_EQ(sub.getNumPublishers(), 1U);
 
@@ -199,12 +199,12 @@ TEST(SubscribeStar, multipleShutdownConcreteIntra)
 
 TEST(SubscribeStar, simpleInter)
 {
-  ros::NodeHandle nh;
+  miniros::NodeHandle nh;
   AnyHelper h;
-  ros::Subscriber sub = nh.subscribe("test_star_inter", 0, &AnyHelper::cb, &h);
+  miniros::Subscriber sub = nh.subscribe("test_star_inter", 0, &AnyHelper::cb, &h);
 
-  ros::WallDuration(1.0).sleep();
-  ros::spinOnce();
+  miniros::WallDuration(1.0).sleep();
+  miniros::spinOnce();
 
   EXPECT_EQ(sub.getNumPublishers(), 1U);
   EXPECT_GT(h.count, 0U);
@@ -212,12 +212,12 @@ TEST(SubscribeStar, simpleInter)
 
 TEST(SubscribeStar, simpleInterUDP)
 {
-  ros::NodeHandle nh;
+  miniros::NodeHandle nh;
   AnyHelper h;
-  ros::Subscriber sub = nh.subscribe("test_star_inter", 0, &AnyHelper::cb, &h, ros::TransportHints().udp());
+  miniros::Subscriber sub = nh.subscribe("test_star_inter", 0, &AnyHelper::cb, &h, miniros::TransportHints().udp());
 
-  ros::WallDuration(1.0).sleep();
-  ros::spinOnce();
+  miniros::WallDuration(1.0).sleep();
+  miniros::spinOnce();
 
   EXPECT_EQ(sub.getNumPublishers(), 1U);
   EXPECT_GT(h.count, 0U);
@@ -226,23 +226,23 @@ TEST(SubscribeStar, simpleInterUDP)
 // must be the last test as it makes the service node exit
 TEST(SubscribeStar, switchTypeInter)
 {
-  ros::NodeHandle nh;
+  miniros::NodeHandle nh;
   AnyHelper h;
-  ros::Subscriber sub = nh.subscribe("test_star_inter", 0, &AnyHelper::cb, &h);
-  ros::Subscriber sub2 = nh.subscribe("test_star_inter", 0, emptyCallback);
+  miniros::Subscriber sub = nh.subscribe("test_star_inter", 0, &AnyHelper::cb, &h);
+  miniros::Subscriber sub2 = nh.subscribe("test_star_inter", 0, emptyCallback);
 
-  ros::WallDuration(1.0).sleep();
-  ros::spinOnce();
+  miniros::WallDuration(1.0).sleep();
+  miniros::spinOnce();
 
   ASSERT_EQ(sub.getNumPublishers(), 1U);
   ASSERT_EQ(sub2.getNumPublishers(), 1U);
 
   std_srvs::Empty srv;
   // by invoking the service call the service node will exit with FATAL
-  ASSERT_TRUE(ros::service::call("switch_publisher_type", srv));
+  ASSERT_TRUE(miniros::service::call("switch_publisher_type", srv));
 
-  ros::WallDuration(1.0).sleep();
-  ros::spinOnce();
+  miniros::WallDuration(1.0).sleep();
+  miniros::spinOnce();
 
   ASSERT_EQ(sub.getNumPublishers(), 0U);
   ASSERT_EQ(sub2.getNumPublishers(), 0U);
@@ -251,23 +251,23 @@ TEST(SubscribeStar, switchTypeInter)
 // disabled because switchTypeInter will stop the other node intentionally
 //TEST(SubscribeStar, switchTypeInterUDP)
 //{
-//  ros::NodeHandle nh;
+//  miniros::NodeHandle nh;
 //  AnyHelper h;
-//  ros::Subscriber sub = nh.subscribe("test_star_inter", 0, &AnyHelper::cb, &h, ros::TransportHints().udp());
-//  ros::Subscriber sub2 = nh.subscribe("test_star_inter", 0, emptyCallback, ros::TransportHints().udp());
+//  miniros::Subscriber sub = nh.subscribe("test_star_inter", 0, &AnyHelper::cb, &h, miniros::TransportHints().udp());
+//  miniros::Subscriber sub2 = nh.subscribe("test_star_inter", 0, emptyCallback, miniros::TransportHints().udp());
 //
-//  ros::WallDuration(1.0).sleep();
-//  ros::spinOnce();
+//  miniros::WallDuration(1.0).sleep();
+//  miniros::spinOnce();
 //
 //  ASSERT_EQ(sub.getNumPublishers(), 1U);
 //  ASSERT_EQ(sub2.getNumPublishers(), 1U);
 //
 //  std_srvs::Empty srv;
 //  // by invoking the service call the service node will exit with FATAL
-//  ASSERT_TRUE(ros::service::call("switch_publisher_type", srv));
+//  ASSERT_TRUE(miniros::service::call("switch_publisher_type", srv));
 //
-//  ros::WallDuration(1.0).sleep();
-//  ros::spinOnce();
+//  miniros::WallDuration(1.0).sleep();
+//  miniros::spinOnce();
 //
 //  ASSERT_EQ(sub.getNumPublishers(), 0U);
 //  ASSERT_EQ(sub2.getNumPublishers(), 0U);
@@ -276,7 +276,7 @@ TEST(SubscribeStar, switchTypeInter)
 int main(int argc, char** argv)
 {
   testing::InitGoogleTest(&argc, argv);
-  ros::init(argc, argv, "subscribe_star");
-  ros::NodeHandle nh;
+  miniros::init(argc, argv, "subscribe_star");
+  miniros::NodeHandle nh;
   return RUN_ALL_TESTS();
 }

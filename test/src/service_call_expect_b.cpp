@@ -37,7 +37,7 @@
 
 #include <gtest/gtest.h>
 
-#include "ros/ros.h"
+#include <miniros/ros.h>
 #include "ros/service.h"
 #include <test_roscpp/TestStringString.h>
 
@@ -47,12 +47,12 @@ TEST(SrvCall, callSrv)
   test_roscpp::TestStringString::Response res;
 
   req.str = "nothing";
-  ros::NodeHandle nh;
+  miniros::NodeHandle nh;
 
   int param;
   while(!nh.getParam("advertisers_ready", param))
-    ros::Duration(0.01).sleep();
-  bool call_result = ros::service::call("service_adv", req, res);
+    miniros::Duration(0.01).sleep();
+  bool call_result = miniros::service::call("service_adv", req, res);
   ASSERT_TRUE(call_result);
 
   ASSERT_STREQ(res.str.c_str(), "B");
@@ -63,8 +63,8 @@ main(int argc, char** argv)
 {
   testing::InitGoogleTest(&argc, argv);
 
-  ros::init(argc, argv, "service_call_expect_b");
-  ros::NodeHandle nh;
+  miniros::init(argc, argv, "service_call_expect_b");
+  miniros::NodeHandle nh;
 
   return RUN_ALL_TESTS();
 }

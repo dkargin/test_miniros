@@ -38,16 +38,16 @@
 #include <time.h>
 #include <stdlib.h>
 
-#include "ros/ros.h"
+#include <miniros/ros.h>
 #include <test_roscpp/TestArray.h>
 
-using namespace ros;
+using namespace miniros;
 using namespace test_roscpp;
 
 TEST(Roscpp, waitForMessage)
 {
-  ros::NodeHandle nh;
-  ros::Publisher pub = nh.advertise<TestArray>("test", 1, true);
+  miniros::NodeHandle nh;
+  miniros::Publisher pub = nh.advertise<TestArray>("test", 1, true);
   pub.publish(TestArray());
   TestArrayConstPtr msg = topic::waitForMessage<TestArray>("test");
   ASSERT_TRUE(msg);
@@ -55,22 +55,22 @@ TEST(Roscpp, waitForMessage)
 
 TEST(Roscpp, waitForMessageWithTimeout)
 {
-  ros::NodeHandle nh;
+  miniros::NodeHandle nh;
 
-  ros::Time start = ros::Time::now();
-  TestArrayConstPtr msg = topic::waitForMessage<TestArray>("test", ros::Duration(1.0));
-  ros::Time end = ros::Time::now();
-  ros::Duration dur = end - start;
-  ASSERT_GE(dur, ros::Duration(1.0));
+  miniros::Time start = miniros::Time::now();
+  TestArrayConstPtr msg = topic::waitForMessage<TestArray>("test", miniros::Duration(1.0));
+  miniros::Time end = miniros::Time::now();
+  miniros::Duration dur = end - start;
+  ASSERT_GE(dur, miniros::Duration(1.0));
   ASSERT_FALSE(msg);
 }
 
 int main(int argc, char** argv)
 {
   testing::InitGoogleTest(&argc, argv);
-  ros::init(argc, argv, "wait_for_message");
+  miniros::init(argc, argv, "wait_for_message");
 
-  ros::NodeHandle nh;
+  miniros::NodeHandle nh;
 
   return RUN_ALL_TESTS();
 }

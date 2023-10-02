@@ -29,7 +29,7 @@
 
 #include <time.h>
 
-#include "ros/ros.h"
+#include <miniros/ros.h>
 #include <test_roscpp/TestArray.h>
 
 void callback(const test_roscpp::TestArrayConstPtr&)
@@ -38,13 +38,13 @@ void callback(const test_roscpp::TestArrayConstPtr&)
 
 int main(int argc, char **argv)
 {
-  ros::init(argc, argv, "subscribe_unsubscribe_repeatedly");
-  ros::NodeHandle nh;
-  ros::Duration sleep_time(0, 100000000);
-  while(ros::ok())
+  miniros::init(argc, argv, "subscribe_unsubscribe_repeatedly");
+  miniros::NodeHandle nh;
+  miniros::Duration sleep_time(0, 100000000);
+  while(miniros::ok())
   {
     sleep_time.sleep();
-    ros::Subscriber sub = nh.subscribe("roscpp/pubsub_test", 1, callback);
+    miniros::Subscriber sub = nh.subscribe("roscpp/pubsub_test", 1, callback);
     sleep_time.sleep();
   }
   

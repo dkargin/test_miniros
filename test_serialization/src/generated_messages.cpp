@@ -257,7 +257,7 @@ ALLOCATOR_CONSTRUCTOR_COMPILATION_TEST(MyVariableLengthStringArray, Allocator<vo
 
 TEST(Generated, serializationOStreamOperator)
 {
-  using namespace ros::serialization;
+  using namespace miniros::serialization;
   Array b(new uint8_t[8]);
   OStream ostream(b.get(), 8);
   FixedLength m;

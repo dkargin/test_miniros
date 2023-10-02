@@ -40,7 +40,7 @@
 #include <time.h>
 #include <stdlib.h>
 
-#include "ros/ros.h"
+#include <miniros/ros.h>
 #include <test_roscpp/TestArray.h>
 
 int g_argc;
@@ -50,14 +50,14 @@ class Subscriptions : public testing::Test
 {
   public:
     // A node is needed to make a service call
-    ros::NodeHandle n;
+    miniros::NodeHandle n;
     bool success;
     bool failure;
     std::string transport;
     bool reliable;
     int msgs_expected;
     int msgs_received;
-    ros::Duration dt;
+    miniros::Duration dt;
 
     void MsgCallback(const test_roscpp::TestArray::ConstPtr& msg)
     {
@@ -124,22 +124,22 @@ class Subscriptions : public testing::Test
 
 TEST_F(Subscriptions, pubSubNFast)
 {
-  ros::TransportHints hints;
+  miniros::TransportHints hints;
   if (reliable)
     hints.reliable();
   else
     hints.unreliable();
 
-  ros::Subscriber sub = n.subscribe("roscpp/pubsub_test", msgs_expected, &Subscriptions::MsgCallback, (Subscriptions *)this, hints);
+  miniros::Subscriber sub = n.subscribe("roscpp/pubsub_test", msgs_expected, &Subscriptions::MsgCallback, (Subscriptions *)this, hints);
   
   ASSERT_TRUE(sub);
 
-  ros::Time t1(ros::Time::now() + dt);
+  miniros::Time t1(miniros::Time::now() + dt);
   
-  while(ros::Time::now() < t1 && !success)
+  while(miniros::Time::now() < t1 && !success)
   {
-    ros::spinOnce();
-    ros::WallDuration(0.01).sleep();
+    miniros::spinOnce();
+    miniros::WallDuration(0.01).sleep();
   }
   
   printf("msgs_received == %d\n", msgs_received);
@@ -153,7 +153,7 @@ int
 main(int argc, char** argv)
 {
   testing::InitGoogleTest(&argc, argv);
-  ros::init(argc, argv, "subscriber");
+  miniros::init(argc, argv, "subscriber");
   g_argc = argc;
   g_argv = argv;
   return RUN_ALL_TESTS();

@@ -1,45 +1,3 @@
-catkin_add_gtest(${PROJECT_NAME}-test_version test_version.cpp)
-if(TARGET ${PROJECT_NAME}-test_version)
-  target_link_libraries(${PROJECT_NAME}-test_version ${catkin_LIBRARIES})
-endif()
-
-catkin_add_gtest(${PROJECT_NAME}-test_header test_header.cpp)
-if(TARGET ${PROJECT_NAME}-test_header)
-  target_link_libraries(${PROJECT_NAME}-test_header ${catkin_LIBRARIES})
-endif()
-
-catkin_add_gtest(${PROJECT_NAME}-test_poll_set test_poll_set.cpp)
-if(TARGET ${PROJECT_NAME}-test_poll_set)
-  target_link_libraries(${PROJECT_NAME}-test_poll_set ${catkin_LIBRARIES})
-  if(WIN32)
-    target_link_libraries(${PROJECT_NAME}-test_poll_set ws2_32)
-  endif()
-endif()
-
-catkin_add_gtest(${PROJECT_NAME}-test_transport_tcp test_transport_tcp.cpp)
-if(TARGET ${PROJECT_NAME}-test_transport_tcp)
-  target_link_libraries(${PROJECT_NAME}-test_transport_tcp ${catkin_LIBRARIES})
-endif()
-
-catkin_add_gtest(${PROJECT_NAME}-test_subscription_queue test_subscription_queue.cpp)
-if(TARGET ${PROJECT_NAME}-test_subscription_queue)
-  target_link_libraries(${PROJECT_NAME}-test_subscription_queue ${catkin_LIBRARIES})
-endif()
-
-catkin_add_gtest(${PROJECT_NAME}-test_callback_queue test_callback_queue.cpp)
-if(TARGET ${PROJECT_NAME}-test_callback_queue)
-  target_link_libraries(${PROJECT_NAME}-test_callback_queue ${catkin_LIBRARIES})
-endif()
-
-catkin_add_gtest(${PROJECT_NAME}-test_names test_names.cpp)
-if(TARGET ${PROJECT_NAME}-test_names)
-  target_link_libraries(${PROJECT_NAME}-test_names ${catkin_LIBRARIES})
-endif()
-
-catkin_add_gtest(${PROJECT_NAME}-test_args test_args.cpp)
-if(TARGET ${PROJECT_NAME}-test_args)
-  target_link_libraries(${PROJECT_NAME}-test_args ${catkin_LIBRARIES})
-endif()
 
 if(GTEST_FOUND)
   add_subdirectory(src)
@@ -89,7 +47,7 @@ add_rostest(launch/service_call_unadv.xml)
 
 add_rostest(launch/service_call_zombie.xml)
 
-# Repeatedly call ros::init() and ros::fini()
+# Repeatedly call miniros::init() and miniros::fini()
 add_rostest(launch/multiple_init_fini.xml)
 
 # Test node inspection functionality

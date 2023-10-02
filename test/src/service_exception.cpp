@@ -2,7 +2,7 @@
 #include <gtest/gtest.h>
 #include <list>
 
-#include "ros/ros.h"
+#include <miniros/ros.h>
 #include "std_srvs/Empty.h"
 #include <log4cxx/appenderskeleton.h>
 #ifdef _MSC_VER
@@ -57,17 +57,17 @@ static const char SERVICE[] = "service_exception";
 
 TEST(roscpp, ServiceThrowingException)
 {
-  ros::AsyncSpinner spinner(1);
+  miniros::AsyncSpinner spinner(1);
   spinner.start();
 
-  ros::NodeHandle n;
-  ros::ServiceServer service = n.advertiseService(SERVICE, throwingService);
+  miniros::NodeHandle n;
+  miniros::ServiceServer service = n.advertiseService(SERVICE, throwingService);
 
   log4cxx::LoggerPtr logger = log4cxx::Logger::getLogger("ros.roscpp");
   ListAppenderPtr appender = new ListAppender();
   logger->addAppender(appender);
 
-  ros::ServiceClient client = n.serviceClient<std_srvs::Empty>(SERVICE, true);
+  miniros::ServiceClient client = n.serviceClient<std_srvs::Empty>(SERVICE, true);
   std_srvs::Empty srv;
   bool success = client.call(srv);
   ASSERT_FALSE(success);
@@ -95,6 +95,6 @@ TEST(roscpp, ServiceThrowingException)
 int main(int argc, char **argv)
 {
   testing::InitGoogleTest(&argc, argv);
-  ros::init(argc, argv, "service_exception");
+  miniros::init(argc, argv, "service_exception");
   return RUN_ALL_TESTS();
 }

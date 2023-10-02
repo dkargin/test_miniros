@@ -40,7 +40,7 @@
 #include <time.h>
 #include <stdlib.h>
 
-#include "ros/ros.h"
+#include <miniros/ros.h>
 #include <test_roscpp/TestArray.h>
 
 int g_argc;
@@ -60,16 +60,16 @@ TEST(roscpp, multipleInitAndFini)
 
   for ( int i = 0; i < try_count; ++i )
   {
-    ros::init( g_argc, g_argv, "multiple_init_fini" );
-    ros::NodeHandle nh;
+    miniros::init( g_argc, g_argv, "multiple_init_fini" );
+    miniros::NodeHandle nh;
 
-    ros::Subscriber sub = nh.subscribe("test", 1, callback);
+    miniros::Subscriber sub = nh.subscribe("test", 1, callback);
     ASSERT_TRUE(sub);
 
-    ros::Publisher pub = nh.advertise<test_roscpp::TestArray>( "test2", 1 );
+    miniros::Publisher pub = nh.advertise<test_roscpp::TestArray>( "test2", 1 );
     ASSERT_TRUE(pub);
 
-    ros::shutdown();
+    miniros::shutdown();
   }
 }
 

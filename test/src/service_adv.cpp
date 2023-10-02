@@ -33,7 +33,7 @@
  * Advertise a service
  */
 
-#include "ros/ros.h"
+#include <miniros/ros.h>
 #include <test_roscpp/TestStringString.h>
 
 bool caseFlip(test_roscpp::TestStringString::Request  &req,
@@ -58,18 +58,18 @@ bool caseFlipLongRunning(test_roscpp::TestStringString::Request  &req,
 {
   caseFlip(req, res);
 
-  ros::Duration(2).sleep();
+  miniros::Duration(2).sleep();
   return true;
 }
 
 bool caseFlipUnadvertise(test_roscpp::TestStringString::Request  &req,
-                     test_roscpp::TestStringString::Response &res, ros::ServiceServer& srv)
+                     test_roscpp::TestStringString::Response &res, miniros::ServiceServer& srv)
 {
   caseFlip(req, res);
 
   srv.shutdown();
 
-  ros::Duration(2).sleep();
+  miniros::Duration(2).sleep();
   return true;
 }
 
@@ -77,13 +77,13 @@ bool caseFlipUnadvertise(test_roscpp::TestStringString::Request  &req,
 int
 main(int argc, char** argv)
 {
-  ros::init(argc, argv, "service_adv");
-  ros::NodeHandle nh;
+  miniros::init(argc, argv, "service_adv");
+  miniros::NodeHandle nh;
 
-  ros::ServiceServer srv1, srv2, srv3;
+  miniros::ServiceServer srv1, srv2, srv3;
   srv1 = nh.advertiseService("service_adv", caseFlip);
   srv2 = nh.advertiseService("service_adv_long", caseFlipLongRunning);
   srv3 = nh.advertiseService<test_roscpp::TestStringString::Request, test_roscpp::TestStringString::Response>("service_adv_unadv_in_callback", boost::bind(caseFlipUnadvertise, _1, _2, boost::ref(srv3)));
-  ros::spin();
+  miniros::spin();
 }
 

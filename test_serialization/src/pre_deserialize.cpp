@@ -35,7 +35,7 @@
 
 #include <gtest/gtest.h>
 
-#include <ros/ros.h>
+#include <miniros/ros.h>
 
 // To avoid the intraprocess optimization we use two messages
 
@@ -117,16 +117,16 @@ void callback(const boost::shared_ptr<IncomingMsg const>& msg)
 
 TEST(PreDeserialize, preDeserialize)
 {
-  ros::NodeHandle nh;
-  ros::Publisher pub = nh.advertise<OutgoingMsg>("test", 0);
-  ros::Subscriber sub = nh.subscribe("test", 0, callback);
+  miniros::NodeHandle nh;
+  miniros::Publisher pub = nh.advertise<OutgoingMsg>("test", 0);
+  miniros::Subscriber sub = nh.subscribe("test", 0, callback);
 
   pub.publish(OutgoingMsg());
 
   while (!g_msg)
   {
-    ros::spinOnce();
-    ros::WallDuration(0.01).sleep();
+    miniros::spinOnce();
+    miniros::WallDuration(0.01).sleep();
   }
 
   EXPECT_TRUE(g_msg->touched);
@@ -135,8 +135,8 @@ TEST(PreDeserialize, preDeserialize)
 int main(int argc, char** argv)
 {
   testing::InitGoogleTest(&argc, argv);
-  ros::init(argc, argv, "builtin_types");
-  ros::NodeHandle nh;
+  miniros::init(argc, argv, "builtin_types");
+  miniros::NodeHandle nh;
 
   return RUN_ALL_TESTS();
 }

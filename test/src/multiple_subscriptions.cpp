@@ -35,7 +35,7 @@
 #include <gtest/gtest.h>
 #include <time.h>
 #include <stdlib.h>
-#include "ros/ros.h"
+#include <miniros/ros.h>
 #include <test_roscpp/TestArray.h>
 #include <test_roscpp/TestEmpty.h>
 
@@ -45,11 +45,11 @@ char** g_argv;
 class Subscriptions : public testing::Test
 {
   public:
-    ros::NodeHandle nh_;
+    miniros::NodeHandle nh_;
     bool got_it[4], should_have_it[4];
-    ros::Subscriber subs_[4];
-    ros::Subscriber verify_sub_;
-    ros::Subscriber reset_sub_;
+    miniros::Subscriber subs_[4];
+    miniros::Subscriber verify_sub_;
+    miniros::Subscriber reset_sub_;
     bool test_ready;
     int n_test;
 
@@ -134,16 +134,16 @@ TEST_F(Subscriptions, multipleSubscriptions)
       }
     ASSERT_TRUE(sub_wrappers());
 
-    ros::Time t_start = ros::Time::now();
+    miniros::Time t_start = miniros::Time::now();
     n_test = 0;
-    while (n_test < 10 && ros::Time::now() - t_start < ros::Duration(5000.0))
+    while (n_test < 10 && miniros::Time::now() - t_start < miniros::Duration(5000.0))
     {
       static int count = 0;
       if (count++ % 10 == 0)
         ROS_INFO("%d/100 tests completed...\n", n_test);
 
-      ros::spinOnce();
-      ros::Duration(0.01).sleep();
+      miniros::spinOnce();
+      miniros::Duration(0.01).sleep();
     }
     
     for (int j = 0; j < 4; j++)
@@ -167,15 +167,15 @@ void callback2(const test_roscpp::TestEmptyConstPtr&)
 
 TEST(Subscriptions2, multipleDifferentMD5Sums)
 {
-  ros::NodeHandle nh;
-  ros::Subscriber sub1 = nh.subscribe("test", 0, callback1);
+  miniros::NodeHandle nh;
+  miniros::Subscriber sub1 = nh.subscribe("test", 0, callback1);
 
   try
   {
-    ros::Subscriber sub2 = nh.subscribe("test", 0, callback2);
+    miniros::Subscriber sub2 = nh.subscribe("test", 0, callback2);
     FAIL();
   }
-  catch (ros::ConflictingSubscriptionException&)
+  catch (miniros::ConflictingSubscriptionException&)
   {
     SUCCEED();
   }
@@ -184,8 +184,8 @@ TEST(Subscriptions2, multipleDifferentMD5Sums)
 int main(int argc, char** argv)
 {
   testing::InitGoogleTest(&argc, argv);
-  ros::init(argc, argv, "multiple_subscriptions");
-  ros::NodeHandle nh;
+  miniros::init(argc, argv, "multiple_subscriptions");
+  miniros::NodeHandle nh;
   g_argc = argc;
   g_argv = argv;
   return RUN_ALL_TESTS();

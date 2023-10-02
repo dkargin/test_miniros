@@ -40,36 +40,36 @@
 #include <time.h>
 #include <stdlib.h>
 
-#include "ros/ros.h"
+#include <miniros/ros.h>
 #include "std_msgs/String.h"
 
 int
 main(int argc, char** argv)
 {
-  ros::init( argc, argv, "left_right");
-  ros::NodeHandle nh;
+  miniros::init( argc, argv, "left_right");
+  miniros::NodeHandle nh;
 
-  ros::Publisher left = nh.advertise<std_msgs::String>("left", 0);
-  ros::Publisher right = nh.advertise<std_msgs::String>("right", 0);
+  miniros::Publisher left = nh.advertise<std_msgs::String>("left", 0);
+  miniros::Publisher right = nh.advertise<std_msgs::String>("right", 0);
 
   std_msgs::String msg_l, msg_r;
   msg_l.data = "left";
   msg_r.data = "right";
   
-  ros::Rate loop_rate(2);
+  miniros::Rate loop_rate(2);
 
   for (unsigned j=0; j<5; ++j)
     {
-      assert(ros::ok());
+      assert(miniros::ok());
 
       left.publish(msg_l);
       right.publish(msg_r);
 
       ROS_INFO("ping!");
 
-      ros::spinOnce();
+      miniros::spinOnce();
       loop_rate.sleep();
-      ros::spinOnce();
+      miniros::spinOnce();
     }
 
 

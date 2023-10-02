@@ -36,7 +36,7 @@
 #include <gtest/gtest.h>
 #include "ros/init.h"
 
-using namespace ros;
+using namespace miniros;
 
 TEST(Args, removeROSArgs)
 {
@@ -50,7 +50,7 @@ TEST(Args, removeROSArgs)
   };
 
   V_string args;
-  ros::removeROSArgs(5, argv, args);
+  miniros::removeROSArgs(5, argv, args);
 
   ASSERT_TRUE(std::find(args.begin(), args.end(), "hello") != args.end());
   ASSERT_TRUE(std::find(args.begin(), args.end(), "goodbye") != args.end());

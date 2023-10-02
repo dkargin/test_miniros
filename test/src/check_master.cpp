@@ -38,7 +38,7 @@
 #include <time.h>
 #include <stdlib.h>
 
-#include "ros/ros.h"
+#include <miniros/ros.h>
 
 #include "xmlrpcpp/XmlRpc.h"
 
@@ -62,15 +62,15 @@ int setenv(const char *name, const char *value, int overwrite)
 
 TEST(CheckMaster, checkMaster)
 {
-  ASSERT_EQ(ros::master::check(), g_should_exist);
+  ASSERT_EQ(miniros::master::check(), g_should_exist);
 }
 
 int main(int argc, char** argv)
 {
   testing::InitGoogleTest(&argc, argv);
 
-  ros::V_string args;
-  ros::removeROSArgs(argc, argv, args);
+  miniros::V_string args;
+  miniros::removeROSArgs(argc, argv, args);
 
   if (args.size() != 2)
   {
@@ -85,7 +85,7 @@ int main(int argc, char** argv)
     std::cout << getenv("ROS_MASTER_URI") << std::endl;
   }
 
-  ros::init(argc, argv, "check_master");
+  miniros::init(argc, argv, "check_master");
 
   return RUN_ALL_TESTS();
 }

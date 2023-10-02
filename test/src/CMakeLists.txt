@@ -85,7 +85,7 @@ add_executable(${PROJECT_NAME}-service_exception EXCLUDE_FROM_ALL service_except
 target_link_libraries(${PROJECT_NAME}-service_exception ${GTEST_LIBRARIES} ${catkin_LIBRARIES})
 add_dependencies(${PROJECT_NAME}-service_exception ${std_srvs_EXPORTED_TARGETS})
 
-# Repeatedly call ros::init()
+# Repeatedly call miniros::init()
 add_executable(${PROJECT_NAME}-multiple_init_fini EXCLUDE_FROM_ALL multiple_init_fini.cpp)
 target_link_libraries(${PROJECT_NAME}-multiple_init_fini ${GTEST_LIBRARIES} ${catkin_LIBRARIES})
 

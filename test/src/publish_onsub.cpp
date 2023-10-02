@@ -38,11 +38,11 @@
 #include <time.h>
 #include <stdlib.h>
 
-#include "ros/ros.h"
+#include <miniros/ros.h>
 #include <test_roscpp/TestEmpty.h>
 
 int32_t g_msg_count = 0;
-void subscriberCallback(const ros::SingleSubscriberPublisher& pub)
+void subscriberCallback(const miniros::SingleSubscriberPublisher& pub)
 {
   test_roscpp::TestEmpty msg;
   for(int i = 0; i < g_msg_count; i++)
@@ -56,7 +56,7 @@ void subscriberCallback(const ros::SingleSubscriberPublisher& pub)
 
 int main(int argc, char** argv)
 {
-  ros::init(argc, argv, "publish_onsub");
+  miniros::init(argc, argv, "publish_onsub");
 
   if(argc != 2)
   {
@@ -66,8 +66,8 @@ int main(int argc, char** argv)
 
   g_msg_count = atoi(argv[1]);
 
-  ros::NodeHandle nh;
-  ros::Publisher pub = nh.advertise<test_roscpp::TestEmpty>("roscpp/pubsub_test", g_msg_count, boost::bind(subscriberCallback, _1));
+  miniros::NodeHandle nh;
+  miniros::Publisher pub = nh.advertise<test_roscpp::TestEmpty>("roscpp/pubsub_test", g_msg_count, boost::bind(subscriberCallback, _1));
 
-  ros::spin();
+  miniros::spin();
 }

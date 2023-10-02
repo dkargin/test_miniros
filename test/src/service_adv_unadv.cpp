@@ -35,7 +35,7 @@
 
 #include <gtest/gtest.h>
 
-#include "ros/ros.h"
+#include <miniros/ros.h>
 #include <test_roscpp/TestStringString.h>
 
 
@@ -45,8 +45,8 @@ static char** g_argv;
 class ServiceAdvertiser : public testing::Test
 {
   public:
-    ros::NodeHandle nh_;
-    ros::ServiceServer srv_;
+    miniros::NodeHandle nh_;
+    miniros::ServiceServer srv_;
 
     bool advertised_;
     bool failure_;
@@ -106,7 +106,7 @@ TEST_F(ServiceAdvertiser, advUnadv)
       ASSERT_TRUE(adv());
     }
 
-    ros::WallDuration(0.01).sleep();
+    miniros::WallDuration(0.01).sleep();
   }
 
   if(failure_)
@@ -118,7 +118,7 @@ TEST_F(ServiceAdvertiser, advUnadv)
 int
 main(int argc, char** argv)
 {
-  ros::init(argc, argv, "service_adv_unadv");
+  miniros::init(argc, argv, "service_adv_unadv");
   testing::InitGoogleTest(&argc, argv);
   g_argc = argc;
   g_argv = argv;

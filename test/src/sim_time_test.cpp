@@ -42,7 +42,7 @@
 #include <gtest/gtest.h>
 #include <time.h>
 #include <stdlib.h>
-#include "ros/ros.h"
+#include <miniros/ros.h>
 #include <rosgraph_msgs/Clock.h>
 
 #include <boost/thread.hpp>
@@ -54,7 +54,7 @@ char** g_argv;
 class RosClockTest : public testing::Test
 {
 public:
-  void setTime(ros::Time t)
+  void setTime(miniros::Time t)
   {
     rosgraph_msgs::Clock message;
     message.clock = t;
@@ -67,36 +67,36 @@ protected:
     pub_ = nh_.advertise<rosgraph_msgs::Clock>("/clock", 1);
     while (pub_.getNumSubscribers() == 0)
     {
-      ros::WallDuration(0.01).sleep();
+      miniros::WallDuration(0.01).sleep();
     }
   }
 
-  ros::NodeHandle nh_;
-  ros::Publisher pub_;
+  miniros::NodeHandle nh_;
+  miniros::Publisher pub_;
 
 };
 
 TEST_F(RosClockTest, SimClockTest)
 {
   //Get the start time.
-  ros::Time start = ros::Time::now();
+  miniros::Time start = miniros::Time::now();
 
   //The start time should be zero before a message is published.
   ASSERT_TRUE(start.isZero());
 
   //Publish a rostime of 42.
-  setTime(ros::Time(42, 0));
+  setTime(miniros::Time(42, 0));
 
   //Wait half a second to get the message.
-  ros::WallDuration(0.5).sleep();
+  miniros::WallDuration(0.5).sleep();
 
   //Make sure that it is really set
-  ASSERT_EQ(42.0, ros::Time::now().toSec());
+  ASSERT_EQ(42.0, miniros::Time::now().toSec());
 }
 
 void sleepThread(bool* done)
 {
-  bool ok = ros::Duration(1.0).sleep();
+  bool ok = miniros::Duration(1.0).sleep();
   if (!ok)
   {
     ROS_ERROR("!OK");
@@ -106,64 +106,64 @@ void sleepThread(bool* done)
 
 TEST(Clock, sleepFromZero)
 {
-  ros::Time::setNow(ros::Time());
+  miniros::Time::setNow(miniros::Time());
   bool done = false;
   boost::thread t(boost::bind(sleepThread, &done));
 
-  ros::WallDuration(1.0).sleep();
-  ros::WallTime start = ros::WallTime::now();
-  ros::Time::setNow(ros::Time(ros::WallTime::now().sec, ros::WallTime::now().nsec));
+  miniros::WallDuration(1.0).sleep();
+  miniros::WallTime start = miniros::WallTime::now();
+  miniros::Time::setNow(miniros::Time(miniros::WallTime::now().sec, miniros::WallTime::now().nsec));
   while (!done)
   {
-    ros::WallDuration(0.001).sleep();
-    ros::WallTime now = ros::WallTime::now();
-    ros::Time::setNow(ros::Time(now.sec, now.nsec));
+    miniros::WallDuration(0.001).sleep();
+    miniros::WallTime now = miniros::WallTime::now();
+    miniros::Time::setNow(miniros::Time(now.sec, now.nsec));
   }
-  ros::WallTime end = ros::WallTime::now();
-  EXPECT_GE(end - start, ros::WallDuration(1.0));
+  miniros::WallTime end = miniros::WallTime::now();
+  EXPECT_GE(end - start, miniros::WallDuration(1.0));
 }
 
 TEST(Clock, isTimeValid)
 {
-  ros::Time::setNow(ros::Time());
-  ASSERT_FALSE(ros::Time::isValid());
-  ros::Time::setNow(ros::TIME_MIN);
-  ASSERT_TRUE(ros::Time::isValid());
+  miniros::Time::setNow(miniros::Time());
+  ASSERT_FALSE(miniros::Time::isValid());
+  miniros::Time::setNow(miniros::TIME_MIN);
+  ASSERT_TRUE(miniros::Time::isValid());
 }
 
 void waitThread(bool* done)
 {
-  ros::Time::waitForValid();
+  miniros::Time::waitForValid();
   *done = true;
 }
 
 TEST(Clock, waitForValid)
 {
-  ros::Time::setNow(ros::Time());
+  miniros::Time::setNow(miniros::Time());
 
   // Test timeout
-  ros::WallTime start = ros::WallTime::now();
-  ASSERT_FALSE(ros::Time::waitForValid(ros::WallDuration(1.0)));
-  ros::WallTime end = ros::WallTime::now();
-  ASSERT_GT(end - start, ros::WallDuration(1.0));
+  miniros::WallTime start = miniros::WallTime::now();
+  ASSERT_FALSE(miniros::Time::waitForValid(miniros::WallDuration(1.0)));
+  miniros::WallTime end = miniros::WallTime::now();
+  ASSERT_GT(end - start, miniros::WallDuration(1.0));
 
   bool done = false;
   boost::thread t(boost::bind(waitThread, &done));
 
-  ros::WallDuration(1.0).sleep();
+  miniros::WallDuration(1.0).sleep();
   ASSERT_FALSE(done);
-  ros::Time::setNow(ros::TIME_MIN);
+  miniros::Time::setNow(miniros::TIME_MIN);
   while (!done)
   {
-    ros::WallDuration(0.01).sleep();
+    miniros::WallDuration(0.01).sleep();
   }
 }
 
 int main(int argc, char** argv)
 {
   testing::InitGoogleTest(&argc, argv);
-  ros::init(argc, argv, "sim_time_test");
-  ros::NodeHandle nh;
+  miniros::init(argc, argv, "sim_time_test");
+  miniros::NodeHandle nh;
   g_argc = argc;
   g_argv = argv;
   return RUN_ALL_TESTS();

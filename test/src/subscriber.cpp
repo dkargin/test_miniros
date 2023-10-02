@@ -24,9 +24,9 @@ void handleMsg(const std_msgs::Int8MultiArray& msg)
 
 int main(int argc, char** argv)
 {
-  ros::init(argc, argv, "subscriber");
-  ros::NodeHandle n;
-  ros::Subscriber sub = n.subscribe("data", 1, &handleMsg, ros::TransportHints().udp());
-  ros::spin();
+  miniros::init(argc, argv, "subscriber");
+  miniros::NodeHandle n;
+  miniros::Subscriber sub = n.subscribe("data", 1, &handleMsg, miniros::TransportHints().udp());
+  miniros::spin();
   return 0;
 }

@@ -40,7 +40,7 @@
 #include <time.h>
 #include <stdlib.h>
 
-#include "ros/ros.h"
+#include <miniros/ros.h>
 #include <test_roscpp/TestEmpty.h>
 
 int g_argc;
@@ -54,7 +54,7 @@ class Subscriptions : public testing::Test
     bool failure;
     int msg_count;
     int msg_i;
-    ros::Duration dt;
+    miniros::Duration dt;
 
     void messageCallback(const test_roscpp::TestEmptyConstPtr&)
     {
@@ -89,14 +89,14 @@ class Subscriptions : public testing::Test
 
 TEST_F(Subscriptions, emptyMsg)
 {
-  ros::NodeHandle nh;
-  ros::Subscriber sub = nh.subscribe("roscpp/pubsub_test", msg_count, &Subscriptions::messageCallback, (Subscriptions*)this);
-  ros::Time t1(ros::Time::now()+dt);
+  miniros::NodeHandle nh;
+  miniros::Subscriber sub = nh.subscribe("roscpp/pubsub_test", msg_count, &Subscriptions::messageCallback, (Subscriptions*)this);
+  miniros::Time t1(miniros::Time::now()+dt);
 
-  while(ros::Time::now() < t1 && !success)
+  while(miniros::Time::now() < t1 && !success)
   {
-    ros::WallDuration(0.01).sleep();
-    ros::spinOnce();
+    miniros::WallDuration(0.01).sleep();
+    miniros::spinOnce();
   }
 
   if(success)
@@ -107,8 +107,8 @@ TEST_F(Subscriptions, emptyMsg)
 
 int main(int argc, char** argv)
 {
-  ros::init(argc, argv, "subscribe_empty");
-  ros::NodeHandle nh;
+  miniros::init(argc, argv, "subscribe_empty");
+  miniros::NodeHandle nh;
 
   testing::InitGoogleTest(&argc, argv);
   g_argc = argc;

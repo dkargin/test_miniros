@@ -40,7 +40,7 @@
 #include <boost/bind.hpp>
 #include <boost/thread.hpp>
 
-using namespace ros;
+using namespace miniros;
 
 class Synchronous : public testing::Test
 {
@@ -58,8 +58,8 @@ protected:
 
   virtual void SetUp()
   {
-    transports_[0] = boost::make_shared<TransportTCP>(static_cast<ros::PollSet*>(NULL), TransportTCP::SYNCHRONOUS);
-    transports_[1] = boost::make_shared<TransportTCP>(static_cast<ros::PollSet*>(NULL), TransportTCP::SYNCHRONOUS);
+    transports_[0] = boost::make_shared<TransportTCP>(static_cast<miniros::PollSet*>(NULL), TransportTCP::SYNCHRONOUS);
+    transports_[1] = boost::make_shared<TransportTCP>(static_cast<miniros::PollSet*>(NULL), TransportTCP::SYNCHRONOUS);
 
     if (!transports_[0]->listen(0, 100, TransportTCP::AcceptCallback()))
     {

@@ -35,7 +35,7 @@
 
 #include <gtest/gtest.h>
 
-#include <ros/ros.h>
+#include <miniros/ros.h>
 #include <std_msgs/builtin_bool.h>
 #include <std_msgs/builtin_double.h>
 #include <std_msgs/builtin_float.h>
@@ -51,7 +51,7 @@
 
 TEST(BuiltinTypes, advertise)
 {
-  ros::NodeHandle nh;
+  miniros::NodeHandle nh;
   nh.advertise<bool>("test_bool", 1);
   nh.advertise<double>("test_double", 1);
   nh.advertise<float>("test_float", 1);
@@ -72,7 +72,7 @@ void callback(const boost::shared_ptr<T const>&)
 
 TEST(BuiltinTypes, subscribe)
 {
-  ros::NodeHandle nh;
+  miniros::NodeHandle nh;
   nh.subscribe("test_bool", 1, callback<bool>);
   nh.subscribe("test_double", 1, callback<double>);
   nh.subscribe("test_float", 1, callback<float>);
@@ -90,8 +90,8 @@ TEST(BuiltinTypes, subscribe)
 int main(int argc, char** argv)
 {
   testing::InitGoogleTest(&argc, argv);
-  ros::init(argc, argv, "builtin_types");
-  ros::NodeHandle nh;
+  miniros::init(argc, argv, "builtin_types");
+  miniros::NodeHandle nh;
 
   return RUN_ALL_TESTS();
 }

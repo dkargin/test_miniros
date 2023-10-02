@@ -44,7 +44,7 @@
 #include <boost/thread.hpp>
 #include <boost/function.hpp>
 
-using namespace ros;
+using namespace miniros;
 
 class CountingCallback : public CallbackInterface
 {
@@ -262,7 +262,7 @@ void callAvailableThread(CallbackQueue* queue, bool& done)
 {
   while (!done)
   {
-    queue->callAvailable(ros::WallDuration(0.1));
+    queue->callAvailable(miniros::WallDuration(0.1));
   }
 }
 
@@ -277,9 +277,9 @@ size_t runThreadedTest(const CountingCallbackPtr& cb, const boost::function<void
     tg.create_thread(boost::bind(threadFunc, &queue, boost::ref(done)));
   }
 
-  ros::WallTime start = ros::WallTime::now();
+  miniros::WallTime start = miniros::WallTime::now();
   size_t i = 0;
-  while (ros::WallTime::now() - start < ros::WallDuration(5))
+  while (miniros::WallTime::now() - start < miniros::WallDuration(5))
   {
     queue.addCallback(cb);
     ++i;
@@ -287,7 +287,7 @@ size_t runThreadedTest(const CountingCallbackPtr& cb, const boost::function<void
 
   while (!queue.isEmpty())
   {
-    ros::WallDuration(0.01).sleep();
+    miniros::WallDuration(0.01).sleep();
   }
 
   done = true;
@@ -308,7 +308,7 @@ void callOneThread(CallbackQueue* queue, bool& done)
 {
   while (!done)
   {
-    queue->callOne(ros::WallDuration(0.1));
+    queue->callOne(miniros::WallDuration(0.1));
   }
 }
 
@@ -334,19 +334,19 @@ public:
 };
 }
 
-void dummyTimer(const ros::TimerEvent&)
+void dummyTimer(const miniros::TimerEvent&)
 {
 }
 
 CallbackQueueInterface* recursiveTimerQueue;
 
-void recursiveTimer(const ros::TimerEvent&)
+void recursiveTimer(const miniros::TimerEvent&)
 {
   // wait until the timer is TimerRecreationCallback is garbaged
   WallDuration(2).sleep();
 
   TimerOptions ops(Duration(0.1), dummyTimer, recursiveTimerQueue, false, false);
-  Timer t = ros::NodeHandle::createTimer(ops);
+  Timer t = miniros::NodeHandle::createTimer(ops);
   t.start();
 }
 
@@ -360,7 +360,7 @@ public:
   virtual CallResult call()
   {
     TimerOptions ops(Duration(0.1), recursiveTimer, queue, false, false);
-    Timer t = ros::NodeHandle::createTimer(ops);
+    Timer t = miniros::NodeHandle::createTimer(ops);
     t.start();
 
     // wait until the recursiveTimer has been fired
@@ -376,7 +376,7 @@ typedef boost::shared_ptr<TimerRecursionCallback> TimerRecursionCallbackPtr;
 TEST(CallbackQueue, recursiveTimer)
 {
   // ensure that the test does not dead-lock, see #3867
-  ros::Time::init();
+  miniros::Time::init();
   CallbackQueue queue;
   recursiveTimerQueue = &queue;
   TimerRecursionCallbackPtr cb(boost::make_shared<TimerRecursionCallback>(&queue));
@@ -392,7 +392,7 @@ TEST(CallbackQueue, recursiveTimer)
 
   while (!queue.isEmpty())
   {
-    ros::WallDuration(0.01).sleep();
+    miniros::WallDuration(0.01).sleep();
   }
 
   done = true;

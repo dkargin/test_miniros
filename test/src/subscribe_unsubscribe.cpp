@@ -40,7 +40,7 @@
 #include <time.h>
 #include <stdlib.h>
 
-#include "ros/ros.h"
+#include <miniros/ros.h>
 #include <test_roscpp/TestArray.h>
 
 #include <boost/thread.hpp>
@@ -51,8 +51,8 @@ char** g_argv;
 class Subscriptions : public testing::Test
 {
 public:
-  ros::NodeHandle nh_;
-  ros::Subscriber sub_;
+  miniros::NodeHandle nh_;
+  miniros::Subscriber sub_;
 
   void messageCallback(const test_roscpp::TestArrayConstPtr&)
   {
@@ -92,8 +92,8 @@ TEST_F(Subscriptions, subUnsub)
       ASSERT_FALSE(sub_);
     }
 
-    ros::WallDuration(0.01).sleep();
-    ros::spinOnce();
+    miniros::WallDuration(0.01).sleep();
+    miniros::spinOnce();
   }
 }
 
@@ -101,10 +101,10 @@ TEST_F(Subscriptions, unsubInCallback)
 {
   sub_ = nh_.subscribe("roscpp/pubsub_test", 0, &Subscriptions::autoUnsubscribeCallback, (Subscriptions*)this);
 
-  while (sub_ && ros::ok())
+  while (sub_ && miniros::ok())
   {
-    ros::WallDuration(0.01).sleep();
-    ros::spinOnce();
+    miniros::WallDuration(0.01).sleep();
+    miniros::spinOnce();
   }
 }
 
@@ -112,12 +112,12 @@ void spinThread(bool volatile* cont)
 {
   while (*cont)
   {
-    ros::spinOnce();
-    ros::Duration(0.001).sleep();
+    miniros::spinOnce();
+    miniros::Duration(0.001).sleep();
   }
 }
 
-void unsubscribeAfterBarrierWait(boost::barrier* barrier, ros::Subscriber& sub)
+void unsubscribeAfterBarrierWait(boost::barrier* barrier, miniros::Subscriber& sub)
 {
   barrier->wait();
 
@@ -129,7 +129,7 @@ TEST_F(Subscriptions, unsubInCallbackAndOtherThread)
   boost::barrier barrier(2);
   for (int i = 0; i < 100; ++i)
   {
-    ros::Subscriber sub;
+    miniros::Subscriber sub;
     sub_ = nh_.subscribe<test_roscpp::TestArray>("roscpp/pubsub_test", 1, boost::bind(unsubscribeAfterBarrierWait, &barrier, boost::ref(sub)));
     sub = sub_;
 
@@ -152,7 +152,7 @@ main(int argc, char** argv)
   g_argc = argc;
   g_argv = argv;
 
-  ros::init(g_argc, g_argv, "subscribe_unsubscribe");
+  miniros::init(g_argc, g_argv, "subscribe_unsubscribe");
 
   if (g_argc != 1)
   {

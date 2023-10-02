@@ -34,7 +34,7 @@
 
 #include "perf_roscpp/intra.h"
 
-#include <ros/ros.h>
+#include <miniros/ros.h>
 
 #include <cstdio>
 #include <iostream>
@@ -170,8 +170,8 @@ int main(int argc, char** argv)
 
   ROS_ASSERT(out.is_open());
 
-  ros::init(argc, argv, "perf_roscpp_intra_suite", ros::init_options::NoSigintHandler|ros::init_options::NoRosout);
-  ros::NodeHandle nh;
+  miniros::init(argc, argv, "perf_roscpp_intra_suite", miniros::init_options::NoSigintHandler|miniros::init_options::NoRosout);
+  miniros::NodeHandle nh;
 
   V_ThroughputResult throughput_results;
   runThroughputTests(out, throughput_results);

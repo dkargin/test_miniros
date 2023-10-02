@@ -35,8 +35,8 @@
 
 namespace test_roscpp
 {
-namespace ser = ros::serialization;
-namespace mt = ros::message_traits;
+namespace ser = miniros::serialization;
+namespace mt = miniros::message_traits;
 typedef boost::shared_array<uint8_t> Array;
 
 template<typename T>

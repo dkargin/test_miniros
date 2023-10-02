@@ -38,12 +38,12 @@
 #include <std_msgs/Header.h>
 #include "helpers.h"
 
-using namespace ros;
-using namespace ros::serialization;
+using namespace miniros;
+using namespace miniros::serialization;
 using namespace test_roscpp;
 
-ROS_STATIC_ASSERT(sizeof(ros::Time) == 8);
-ROS_STATIC_ASSERT(sizeof(ros::Duration) == 8);
+ROS_STATIC_ASSERT(sizeof(miniros::Time) == 8);
+ROS_STATIC_ASSERT(sizeof(miniros::Duration) == 8);
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Tests for compilation/validity of serialization/deserialization of primitive types
@@ -298,7 +298,7 @@ TEST(Serialization, fixedSizeNonSimple_vector)
   in.resize(2);
   in[1].length_to_report = 100;
 
-  int32_t len = ros::serialization::serializationLength(in);
+  int32_t len = miniros::serialization::serializationLength(in);
   ASSERT_EQ(len, 12);  // 12 = 4 bytes for each item + 4-byte array length
 }
 
@@ -307,7 +307,7 @@ TEST(Serialization, fixedSizeNonSimple_array)
   boost::array<FixedSizeNonSimple, 2> in;
   in[1].length_to_report = 100;
 
-  int32_t len = ros::serialization::serializationLength(in);
+  int32_t len = miniros::serialization::serializationLength(in);
   ASSERT_EQ(len, 8);  // 8 = 4 bytes for each item
 }
 
@@ -343,7 +343,7 @@ TEST(Serialization, variableSize_vector)
   in.resize(2);
   in[1].length_to_report = 100;
 
-  int32_t len = ros::serialization::serializationLength(in);
+  int32_t len = miniros::serialization::serializationLength(in);
   ASSERT_EQ(len, 108);  // 108 = 4 bytes for the first item + 100 bytes for the second + 4-byte array length
 }
 
@@ -352,7 +352,7 @@ TEST(Serialization, variableSize_array)
   boost::array<VariableSize, 2> in;
   in[1].length_to_report = 100;
 
-  int32_t len = ros::serialization::serializationLength(in);
+  int32_t len = miniros::serialization::serializationLength(in);
   ASSERT_EQ(len, 104);  // 104 = 4 bytes for the first item + 100 bytes for the second
 }
 
@@ -419,23 +419,23 @@ TEST(MessageTraits, headers)
   const WithoutHeader cwoh;
 
   wh.header.seq = 100;
-  ASSERT_TRUE(ros::message_traits::header(wh) != 0);
-  ASSERT_EQ(ros::message_traits::header(wh)->seq, 100UL);
+  ASSERT_TRUE(miniros::message_traits::header(wh) != 0);
+  ASSERT_EQ(miniros::message_traits::header(wh)->seq, 100UL);
 
-  ASSERT_TRUE(ros::message_traits::header(woh) == 0);
+  ASSERT_TRUE(miniros::message_traits::header(woh) == 0);
 
-  ASSERT_TRUE(ros::message_traits::header(cwh) != 0);
-  ASSERT_TRUE(ros::message_traits::header(cwoh) == 0);
+  ASSERT_TRUE(miniros::message_traits::header(cwh) != 0);
+  ASSERT_TRUE(miniros::message_traits::header(cwoh) == 0);
 
-  ASSERT_TRUE(ros::message_traits::frameId(wh) != 0);
-  ASSERT_TRUE(ros::message_traits::frameId(woh) == 0);
-  ASSERT_TRUE(ros::message_traits::frameId(cwh) != 0);
-  ASSERT_TRUE(ros::message_traits::frameId(cwoh) == 0);
+  ASSERT_TRUE(miniros::message_traits::frameId(wh) != 0);
+  ASSERT_TRUE(miniros::message_traits::frameId(woh) == 0);
+  ASSERT_TRUE(miniros::message_traits::frameId(cwh) != 0);
+  ASSERT_TRUE(miniros::message_traits::frameId(cwoh) == 0);
 
-  ASSERT_TRUE(ros::message_traits::timeStamp(wh) != 0);
-  ASSERT_TRUE(ros::message_traits::timeStamp(woh) == 0);
-  ASSERT_TRUE(ros::message_traits::timeStamp(cwh) != 0);
-  ASSERT_TRUE(ros::message_traits::timeStamp(cwoh) == 0);
+  ASSERT_TRUE(miniros::message_traits::timeStamp(wh) != 0);
+  ASSERT_TRUE(miniros::message_traits::timeStamp(woh) == 0);
+  ASSERT_TRUE(miniros::message_traits::timeStamp(cwh) != 0);
+  ASSERT_TRUE(miniros::message_traits::timeStamp(cwoh) == 0);
 }
 
 TEST(Serialization, bufferOverrun)
@@ -449,7 +449,7 @@ TEST(Serialization, bufferOverrun)
     deserialize(stream, i);
     FAIL();
   }
-  catch(ros::Exception&)
+  catch(miniros::Exception&)
   {
     SUCCEED();
   }

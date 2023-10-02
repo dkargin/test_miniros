@@ -32,14 +32,14 @@
 *  POSSIBILITY OF SUCH DAMAGE.
 ********************************************************************/
 
-#include "ros/ros.h"
+#include <miniros/ros.h>
 
 int main(int argc, char** argv)
 {
-  ros::init(argc, argv, "param_update_test");
-  ros::NodeHandle nh;
+  miniros::init(argc, argv, "param_update_test");
+  miniros::NodeHandle nh;
 
-  while (ros::ok())
+  while (miniros::ok())
   {
     ROS_INFO("getting parameters...");
 
@@ -59,7 +59,7 @@ int main(int argc, char** argv)
       ROS_INFO("test3=%d", i);
     }
 
-    ros::WallDuration(0.1).sleep();
+    miniros::WallDuration(0.1).sleep();
   }
 
   return 0;

@@ -30,7 +30,7 @@
 // Advertise a service, then crash horribly and leaving a "zombie service"
 // behind. Needed for service_call_zombie test.
 
-#include <ros/ros.h>
+#include <miniros/ros.h>
 #include <test_roscpp/TestStringString.h>
 
 #include <stdlib.h>
@@ -47,15 +47,15 @@ bool srvCallback(test_roscpp::TestStringString::Request &,
 
 int main(int argc, char** argv)
 {
-	ros::init(argc, argv, "dying_node");
+	miniros::init(argc, argv, "dying_node");
 
-	ros::NodeHandle nh;
-	ros::ServiceServer srv = nh.advertiseService("phantom_service", srvCallback);
+	miniros::NodeHandle nh;
+	miniros::ServiceServer srv = nh.advertiseService("phantom_service", srvCallback);
 
 	// Allow for some time for registering on the master
 	for(int i = 0; i < 10; ++i)
 	{
-		ros::spinOnce();
+		miniros::spinOnce();
 
 #ifndef _WIN32
 		usleep(100*1000);

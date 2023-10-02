@@ -29,7 +29,7 @@
 
 #include <gtest/gtest.h>
 
-#include <ros/ros.h>
+#include <miniros/ros.h>
 
 #include <test_roscpp/TestWithHeader.h>
 
@@ -40,22 +40,22 @@ void callback(const test_roscpp::TestWithHeaderConstPtr&)
 
 TEST(TopicStatistics, empty_timestamp_crash_check)
 {
-  ros::NodeHandle nh;
+  miniros::NodeHandle nh;
 
-  ros::Publisher pub = nh.advertise<test_roscpp::TestWithHeader>("test_with_empty_timestamp", 0);
-  ros::Subscriber sub = nh.subscribe("test_with_empty_timestamp", 0, callback);
+  miniros::Publisher pub = nh.advertise<test_roscpp::TestWithHeader>("test_with_empty_timestamp", 0);
+  miniros::Subscriber sub = nh.subscribe("test_with_empty_timestamp", 0, callback);
 
-  ros::Time start = ros::Time::now();
-  ros::Duration time_to_publish(10.0);
-  while ( (ros::Time::now() - start) < time_to_publish )
+  miniros::Time start = miniros::Time::now();
+  miniros::Duration time_to_publish(10.0);
+  while ( (miniros::Time::now() - start) < time_to_publish )
   {
     test_roscpp::TestWithHeader msg;
     msg.header.frame_id = "foo";
     // Don't fill in timestamp so that it defaults to 0.0
 
     pub.publish(msg);
-    ros::spinOnce();
-    ros::WallDuration(0.01).sleep();
+    miniros::spinOnce();
+    miniros::WallDuration(0.01).sleep();
   }
 
   SUCCEED();
@@ -65,7 +65,7 @@ int main(int argc, char **argv)
 {
   testing::InitGoogleTest(&argc, argv);
 
-  ros::init(argc, argv, "stamped_topic_statistics_empty_timestamp");
+  miniros::init(argc, argv, "stamped_topic_statistics_empty_timestamp");
 
   return RUN_ALL_TESTS();
 }

@@ -31,17 +31,17 @@
  * Author: Josh Faust
  */
 
-#include <ros/ros.h>
+#include <miniros/ros.h>
 #include <std_srvs/Empty.h>
 #include <test_roscpp/TestEmpty.h>
 #include <test_roscpp/TestArray.h>
 
-ros::Publisher g_pub;
+miniros::Publisher g_pub;
 int8_t type = 0;
 
 bool switchPublisherType(std_srvs::EmptyRequest&, std_srvs::EmptyResponse&)
 {
-  ros::NodeHandle nh;
+  miniros::NodeHandle nh;
   g_pub.shutdown();
   type = (type + 1) % 2;
   switch (type)
@@ -56,18 +56,18 @@ bool switchPublisherType(std_srvs::EmptyRequest&, std_srvs::EmptyResponse&)
   return true;
 }
 
-void pubTimer(const ros::TimerEvent&)
+void pubTimer(const miniros::TimerEvent&)
 {
   g_pub.publish(test_roscpp::TestEmpty());
 }
 
 int main(int argc, char** argv)
 {
-  ros::init(argc, argv, "publisher_for_star_subscriber");
-  ros::NodeHandle nh;
+  miniros::init(argc, argv, "publisher_for_star_subscriber");
+  miniros::NodeHandle nh;
 
   g_pub = nh.advertise<test_roscpp::TestEmpty>("test_star_inter", 0);
-  ros::Timer t = nh.createTimer(ros::Duration(0.01), pubTimer);
-  ros::ServiceServer s = nh.advertiseService("switch_publisher_type", switchPublisherType);
-  ros::spin();
+  miniros::Timer t = nh.createTimer(miniros::Duration(0.01), pubTimer);
+  miniros::ServiceServer s = nh.advertiseService("switch_publisher_type", switchPublisherType);
+  miniros::spin();
 }

@@ -33,7 +33,7 @@
  * Advertise a service, then run another app that advertises another service
  */
 
-#include "ros/ros.h"
+#include <miniros/ros.h>
 #include <test_roscpp/TestStringString.h>
 
 bool srvCallback(test_roscpp::TestStringString::Request &,
@@ -45,11 +45,11 @@ bool srvCallback(test_roscpp::TestStringString::Request &,
 
 int main(int argc, char** argv)
 {
-  ros::init(argc, argv, "service_adv_a");
-  ros::NodeHandle nh;
+  miniros::init(argc, argv, "service_adv_a");
+  miniros::NodeHandle nh;
 
-  ros::ServiceServer srv = nh.advertiseService("service_adv", srvCallback);
+  miniros::ServiceServer srv = nh.advertiseService("service_adv", srvCallback);
 
-  ros::spin();
+  miniros::spin();
 }
 
